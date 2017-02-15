@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[   2402524,      41853]
-NotebookOptionsPosition[   2393298,      41538]
-NotebookOutlinePosition[   2393827,      41559]
-CellTagsIndexPosition[   2393784,      41556]
+NotebookDataLength[   2406133,      41966]
+NotebookOptionsPosition[   2396295,      41630]
+NotebookOutlinePosition[   2396824,      41651]
+CellTagsIndexPosition[   2396781,      41648]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -41530,8 +41530,100 @@ Cell[BoxData[
 }, Open  ]]
 }, Open  ]],
 
+Cell[CellGroupData[{
+
 Cell["Part h.", "Subsection",
- CellChangeTimes->{{3.696101432489117*^9, 3.6961014341409845`*^9}}]
+ CellChangeTimes->{{3.696101432489117*^9, 3.6961014341409845`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Save the additional numeric values to memory", "Subsubsection",
+ CellChangeTimes->{{3.696102575672344*^9, 3.6961025849564404`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"vribV", " ", "=", " ", 
+   RowBox[{"vrib", " ", "\[Rule]", " ", 
+    RowBox[{"3", " ", 
+     TemplateBox[{
+      InterpretationBox["\[InvisibleSpace]", 1],
+       RowBox[{"\"km\"", "\[InvisibleSpace]", "\"/\"", "\[InvisibleSpace]", 
+         "\"s\""}],"kilometers per second",FractionBox[
+       "\"Kilometers\"", "\"Seconds\""]},
+      "Quantity"]}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Bz0V", " ", "=", " ", 
+   RowBox[{"Bz0", " ", "\[Rule]", " ", 
+    RowBox[{"300", " ", 
+     TemplateBox[{
+      InterpretationBox["\[InvisibleSpace]", 1],"\"G\"","gauss","\"Gauss\""},
+      "Quantity"]}]}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.6961025873803253`*^9, 3.696102646176586*^9}, {
+  3.696102837840191*^9, 3.6961028388561974`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"AppendTo", "[", 
+   RowBox[{"values", ",", " ", "vribV"}], "]"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"AppendTo", "[", 
+   RowBox[{"values", ",", " ", "Bz0V"}], "]"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.696102691076583*^9, 3.696102723720599*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["The total reconnection time was given in lecture as", "Subsubsection",
+ CellChangeTimes->{{3.6961027451181035`*^9, 3.6961027582341013`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"\[Tau]rx", " ", "=", " ", 
+   FractionBox["L", "vrib"]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"\[Tau]rx", " ", "/.", " ", "values"}], " ", "//", 
+  "Framed"}]}], "Input",
+ CellChangeTimes->{{3.6961027609460964`*^9, 3.6961028210281906`*^9}, {
+  3.69610285170424*^9, 3.6961028531522136`*^9}}],
+
+Cell[BoxData[
+ FrameBox[
+  TemplateBox[{"23655.70674295354`","\"s\"","seconds","\"Seconds\""},
+   "Quantity"],
+  StripOnInput->False]], "Output",
+ CellChangeTimes->{{3.696102821836187*^9, 3.6961028534601927`*^9}}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["from the above, we can compute the average power using", "Subsubsection",
+ CellChangeTimes->{{3.696102877512647*^9, 3.6961028872607965`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"d\[Psi]dt", " ", "=", " ", 
+  RowBox[{
+   RowBox[{"\[Tau]rx", " ", "\[CapitalDelta]\[Psi]12b"}], " ", "/.", " ", 
+   "values"}]}]], "Input",
+ CellChangeTimes->{{3.696102889408675*^9, 3.6961029497026396`*^9}}],
+
+Cell[BoxData[
+ TemplateBox[{RowBox[{"-", "2.3664020834343057`*^12"}],RowBox[{
+     SuperscriptBox["\"s\"", "2"], "\[InvisibleSpace]", "\"V\"", 
+     "\[InvisibleSpace]", "\"/\"", "\[InvisibleSpace]", "\"km\""}],
+   "second squared volts per kilometer",FractionBox[
+    RowBox[{
+      SuperscriptBox["\"Seconds\"", "2"], " ", "\"Volts\""}], 
+    "\"Kilometers\""]},
+  "Quantity"]], "Output",
+ CellChangeTimes->{{3.696102936978589*^9, 3.6961029499945955`*^9}}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
@@ -41559,23 +41651,23 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[580, 22, 113, 1, 139, "Title"],
+Cell[580, 22, 113, 1, 141, "Title"],
 Cell[CellGroupData[{
-Cell[718, 27, 134, 5, 244, "Chapter"],
-Cell[855, 34, 139, 2, 42, "Input"],
+Cell[718, 27, 134, 5, 248, "Chapter"],
+Cell[855, 34, 139, 2, 43, "Input"],
 Cell[CellGroupData[{
-Cell[1019, 40, 96, 1, 99, "Section"],
+Cell[1019, 40, 96, 1, 96, "Section"],
 Cell[CellGroupData[{
 Cell[1140, 45, 97, 1, 67, "Subsection"],
 Cell[CellGroupData[{
 Cell[1262, 50, 136, 1, 54, "Subsubsection"],
-Cell[1401, 53, 678, 20, 66, "Input"]
+Cell[1401, 53, 678, 20, 67, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[2116, 78, 137, 1, 54, "Subsubsection"],
 Cell[CellGroupData[{
-Cell[2278, 83, 1184, 19, 42, "Input"],
-Cell[3465, 104, 2238, 35, 60, "Output"]
+Cell[2278, 83, 1184, 19, 43, "Input"],
+Cell[3465, 104, 2238, 35, 43, "Output"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
@@ -41851,7 +41943,28 @@ Cell[2392395, 41511, 727, 16, 69, "Output"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
-Cell[2393161, 41532, 97, 1, 67, "Subsection"]
+Cell[CellGroupData[{
+Cell[2393183, 41534, 97, 1, 67, "Subsection"],
+Cell[CellGroupData[{
+Cell[2393305, 41539, 137, 1, 54, "Subsubsection"],
+Cell[2393445, 41542, 790, 19, 84, "Input"],
+Cell[2394238, 41563, 302, 7, 72, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2394577, 41575, 146, 1, 54, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[2394748, 41580, 341, 8, 94, "Input"],
+Cell[2395092, 41590, 213, 5, 63, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2395354, 41601, 147, 1, 54, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[2395526, 41606, 232, 5, 43, "Input"],
+Cell[2395761, 41613, 458, 9, 55, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
