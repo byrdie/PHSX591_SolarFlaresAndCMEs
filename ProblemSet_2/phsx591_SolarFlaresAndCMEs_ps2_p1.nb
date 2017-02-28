@@ -1,0 +1,216 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      5747,        206]
+NotebookOptionsPosition[      5095,        177]
+NotebookOutlinePosition[      5441,        192]
+CellTagsIndexPosition[      5398,        189]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["\<\
+Solar Flares & CMEs
+Problem Set 2
+Roy Smart\
+\>", "Chapter",
+ CellChangeTimes->{{3.697302859087849*^9, 3.6973028877067623`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Problem 1", "Section",
+ CellChangeTimes->{{3.697302893295733*^9, 3.6973028976679525`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["The flux function for this problem is given by", "Subsubsection",
+ CellChangeTimes->{{3.6973031927977934`*^9, 3.697303202631012*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"A", " ", "=", " ", 
+   RowBox[{
+    RowBox[{"\[Lambda]", " ", 
+     RowBox[{"ArcTan", "[", 
+      FractionBox[
+       RowBox[{"y", "+", "b"}], "z"], "]"}]}], "-", 
+    RowBox[{"\[Lambda]", " ", 
+     RowBox[{"ArcTan", "[", 
+      FractionBox[
+       RowBox[{"y", "-", "b"}], "z"], "]"}]}], " ", "+", " ", 
+    RowBox[{
+     FractionBox["Ics", "c"], 
+     RowBox[{"Log", "[", 
+      FractionBox[
+       RowBox[{
+        SuperscriptBox["y", "2"], " ", "+", " ", 
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{"z", "+", "h"}], ")"}], "2"]}], 
+       RowBox[{
+        SuperscriptBox["y", "2"], "+", 
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{"z", "-", "h"}], ")"}], "2"]}]], "]"}]}]}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.6973032073053503`*^9, 3.6973032477567496`*^9}, {
+  3.6973032928801303`*^9, 3.6973032973204107`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["We can then find the magnetic field by taking a curl", "Subsubsection",
+ CellChangeTimes->{{3.697303334577202*^9, 3.6973033440540776`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"B", " ", "=", " ", 
+  RowBox[{
+   RowBox[{"Cross", "[", 
+    RowBox[{
+     RowBox[{"Grad", "[", 
+      RowBox[{"A", ",", 
+       RowBox[{"{", 
+        RowBox[{"x", ",", "y", ",", "z"}], "}"}]}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "0", ",", "0"}], "}"}]}], "]"}], " ", "//", 
+   "FullSimplify"}]}]], "Input",
+ CellChangeTimes->{{3.697303353854903*^9, 3.69730335955628*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"0", ",", 
+   RowBox[{
+    FractionBox[
+     RowBox[{"4", " ", "h", " ", "Ics", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        SuperscriptBox["h", "2"], "+", 
+        SuperscriptBox["y", "2"], "-", 
+        SuperscriptBox["z", "2"]}], ")"}]}], 
+     RowBox[{"c", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        SuperscriptBox["y", "2"], "+", 
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{"h", "-", "z"}], ")"}], "2"]}], ")"}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        SuperscriptBox["y", "2"], "+", 
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{"h", "+", "z"}], ")"}], "2"]}], ")"}]}]], "-", 
+    FractionBox[
+     RowBox[{"2", " ", "b", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        SuperscriptBox["b", "2"], "-", 
+        SuperscriptBox["y", "2"], "+", 
+        SuperscriptBox["z", "2"]}], ")"}], " ", "\[Lambda]"}], 
+     RowBox[{
+      SuperscriptBox["b", "4"], "+", 
+      RowBox[{"2", " ", 
+       SuperscriptBox["b", "2"], " ", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"-", 
+          SuperscriptBox["y", "2"]}], "+", 
+         SuperscriptBox["z", "2"]}], ")"}]}], "+", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{
+         SuperscriptBox["y", "2"], "+", 
+         SuperscriptBox["z", "2"]}], ")"}], "2"]}]]}], ",", 
+   RowBox[{"4", " ", "y", " ", "z", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      FractionBox[
+       RowBox[{"2", " ", "h", " ", "Ics"}], 
+       RowBox[{"c", " ", 
+        RowBox[{"(", 
+         RowBox[{
+          SuperscriptBox["y", "2"], "+", 
+          SuperscriptBox[
+           RowBox[{"(", 
+            RowBox[{"h", "-", "z"}], ")"}], "2"]}], ")"}], " ", 
+        RowBox[{"(", 
+         RowBox[{
+          SuperscriptBox["y", "2"], "+", 
+          SuperscriptBox[
+           RowBox[{"(", 
+            RowBox[{"h", "+", "z"}], ")"}], "2"]}], ")"}]}]], "+", 
+      FractionBox[
+       RowBox[{"b", " ", "\[Lambda]"}], 
+       RowBox[{
+        SuperscriptBox["b", "4"], "+", 
+        RowBox[{"2", " ", 
+         SuperscriptBox["b", "2"], " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"-", 
+            SuperscriptBox["y", "2"]}], "+", 
+           SuperscriptBox["z", "2"]}], ")"}]}], "+", 
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{
+           SuperscriptBox["y", "2"], "+", 
+           SuperscriptBox["z", "2"]}], ")"}], "2"]}]]}], ")"}]}]}], 
+  "}"}]], "Output",
+ CellChangeTimes->{3.6973033666709657`*^9}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{748, 948},
+WindowMargins->{{Automatic, -7}, {Automatic, 0}},
+FrontEndVersion->"11.0 for Microsoft Windows (64-bit) (September 21, 2016)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 138, 5, 174, "Chapter"],
+Cell[CellGroupData[{
+Cell[743, 31, 96, 1, 70, "Section"],
+Cell[CellGroupData[{
+Cell[864, 36, 139, 1, 39, "Subsubsection"],
+Cell[1006, 39, 903, 28, 56, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1946, 72, 145, 1, 39, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[2116, 77, 417, 12, 30, "Input"],
+Cell[2536, 91, 2507, 80, 100, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+
