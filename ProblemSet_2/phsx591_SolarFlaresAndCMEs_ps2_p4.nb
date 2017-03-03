@@ -1,0 +1,169 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      4376,        159]
+NotebookOptionsPosition[      3510,        122]
+NotebookOutlinePosition[      3858,        137]
+CellTagsIndexPosition[      3815,        134]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["\<\
+Solar Flares & CMEs
+Problem Set 2
+Roy Smart\
+\>", "Chapter",
+ CellChangeTimes->{{3.6975623669366035`*^9, 3.69756239693424*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Clear", "[", "\"\<Global`*\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.6975627569418097`*^9, 3.6975627569593887`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Problem 4", "Section",
+ CellChangeTimes->{{3.697562402017625*^9, 3.6975624035304995`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"$Assumptions", " ", "=", " ", 
+  RowBox[{
+   RowBox[{"Tb", " ", ">", " ", "0"}], " ", "&&", " ", 
+   RowBox[{"Teff", " ", ">", "0"}], " ", "&&", 
+   RowBox[{"\[Tau]\[Nu]", " ", ">", "0"}]}]}]], "Input",
+ CellChangeTimes->{{3.6975628959390635`*^9, 3.697562910940541*^9}, {
+  3.697562961900797*^9, 3.697562971754796*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Tb", ">", "0"}], "&&", 
+  RowBox[{"Teff", ">", "0"}], "&&", 
+  RowBox[{"\[Tau]\[Nu]", ">", "0"}]}]], "Output",
+ CellChangeTimes->{
+  3.697562975114502*^9, {3.6975630712106037`*^9, 3.697563085149441*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+From Dulk 2005, the relationship between optical depth, effective \
+temperature, and brightness temperature is given by\
+\>", "Subsubsection",
+ CellChangeTimes->{{3.697562435673134*^9, 3.697562477269862*^9}, {
+  3.6975627354387226`*^9, 3.6975627621346273`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"d", "=", 
+  RowBox[{"Tb", " ", "\[Equal]", " ", 
+   RowBox[{"Teff", 
+    RowBox[{"(", 
+     RowBox[{"1", "-", 
+      RowBox[{"Exp", "[", 
+       RowBox[{"-", "\[Tau]\[Nu]"}], "]"}]}], ")"}]}]}]}]], "Input",
+ CellChangeTimes->{{3.6975627676929517`*^9, 3.6975628145348783`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Tb", "\[Equal]", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"1", "-", 
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{"-", "\[Tau]\[Nu]"}]]}], ")"}], " ", "Teff"}]}]], "Output",
+ CellChangeTimes->{{3.6975628089326277`*^9, 3.6975628201592164`*^9}, 
+   3.6975629143947816`*^9, 3.6975629751416063`*^9, {3.6975630712236495`*^9, 
+   3.6975630851632595`*^9}}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Solve this expression for the optical depth", "Subsubsection",
+ CellChangeTimes->{{3.697562826110171*^9, 3.6975628321577744`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[Tau]\[Nu]", " ", "=", " ", 
+  RowBox[{"Part", "[", 
+   RowBox[{
+    RowBox[{"Solve", "[", 
+     RowBox[{"d", ",", "\[Tau]\[Nu]"}], "]"}], ",", "1", ",", "1", ",", "2", 
+    ",", "1", ",", "2"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.6975628363331203`*^9, 3.697562868285901*^9}, {
+  3.6975630379579573`*^9, 3.6975630811286054`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Log", "[", 
+  FractionBox["Teff", 
+   RowBox[{
+    RowBox[{"-", "Tb"}], "+", "Teff"}]], "]"}]], "Output",
+ CellChangeTimes->{
+  3.6975628687542276`*^9, 3.697562914410297*^9, 3.6975629751535664`*^9, {
+   3.697563058928461*^9, 3.6975630851763115`*^9}}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{775, 833},
+WindowMargins->{{354, Automatic}, {Automatic, 54}},
+FrontEndVersion->"11.0 for Microsoft Windows (64-bit) (September 21, 2016)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 137, 5, 174, "Chapter"],
+Cell[720, 29, 143, 2, 30, "Input"],
+Cell[CellGroupData[{
+Cell[888, 35, 96, 1, 70, "Section"],
+Cell[CellGroupData[{
+Cell[1009, 40, 343, 7, 30, "Input"],
+Cell[1355, 49, 238, 6, 30, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1630, 60, 271, 5, 67, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[1926, 69, 300, 8, 30, "Input"],
+Cell[2229, 79, 382, 9, 30, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2660, 94, 136, 1, 39, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[2821, 99, 360, 8, 30, "Input"],
+Cell[3184, 109, 274, 7, 44, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+
