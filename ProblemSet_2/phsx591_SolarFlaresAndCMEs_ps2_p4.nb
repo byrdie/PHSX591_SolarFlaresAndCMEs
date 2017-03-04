@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[      4376,        159]
-NotebookOptionsPosition[      3510,        122]
-NotebookOutlinePosition[      3858,        137]
-CellTagsIndexPosition[      3815,        134]
+NotebookDataLength[      4556,        163]
+NotebookOptionsPosition[      3644,        125]
+NotebookOutlinePosition[      3992,        140]
+CellTagsIndexPosition[      3949,        137]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -116,12 +116,15 @@ Cell[BoxData[
   3.6975628687542276`*^9, 3.697562914410297*^9, 3.6975629751535664`*^9, {
    3.697563058928461*^9, 3.6975630851763115`*^9}}]
 }, Open  ]]
-}, Open  ]]
+}, Open  ]],
+
+Cell["Brightness temperature is defined as", "Subsubsection",
+ CellChangeTimes->{{3.6975808844291196`*^9, 3.6975808944368086`*^9}}]
 }, Open  ]]
 }, Open  ]]
 },
-WindowSize->{775, 833},
-WindowMargins->{{354, Automatic}, {Automatic, 54}},
+WindowSize->{1500, 957},
+WindowMargins->{{-8, Automatic}, {Automatic, -8}},
 FrontEndVersion->"11.0 for Microsoft Windows (64-bit) (September 21, 2016)",
 StyleDefinitions->"Default.nb"
 ]
@@ -146,7 +149,7 @@ Cell[1009, 40, 343, 7, 30, "Input"],
 Cell[1355, 49, 238, 6, 30, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[1630, 60, 271, 5, 67, "Subsubsection"],
+Cell[1630, 60, 271, 5, 39, "Subsubsection"],
 Cell[CellGroupData[{
 Cell[1926, 69, 300, 8, 30, "Input"],
 Cell[2229, 79, 382, 9, 30, "Output"]
@@ -158,12 +161,11 @@ Cell[CellGroupData[{
 Cell[2821, 99, 360, 8, 30, "Input"],
 Cell[3184, 109, 274, 7, 44, "Output"]
 }, Open  ]]
-}, Open  ]]
+}, Open  ]],
+Cell[3485, 120, 131, 1, 39, "Subsubsection"]
 }, Open  ]]
 }, Open  ]]
 }
 ]
 *)
-
-(* End of internal cache information *)
 
