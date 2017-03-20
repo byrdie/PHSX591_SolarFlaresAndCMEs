@@ -1,0 +1,403 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     13115,        393]
+NotebookOptionsPosition[     11385,        326]
+NotebookOutlinePosition[     11729,        341]
+CellTagsIndexPosition[     11686,        338]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["\<\
+Roy Smart
+Solar Flares & CMEs
+Problem Set 3\
+\>", "Chapter",
+ CellChangeTimes->{{3.698964740335361*^9, 3.6989647934835978`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Clear", "[", "\"\<Global`*\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.698973722795663*^9, 3.698973735163269*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Part a.", "Section",
+ CellChangeTimes->{{3.698964917664472*^9, 3.698964925543552*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Define array to store numerical values of constants", "Subsubsection",
+ CellChangeTimes->{{3.6989668064791822`*^9, 3.698966823951302*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"vals", " ", "=", 
+   RowBox[{"{", "}"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.698966615692543*^9, 3.698966621732133*^9}, 
+   3.6989735479259233`*^9, {3.6989736657308598`*^9, 3.6989736662616997`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+The problem statement provides the following expression for the radiative \
+loss function\
+\>", "Subsubsection",
+ CellChangeTimes->{{3.698965393784432*^9, 3.698965457764698*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"\[CapitalLambda]", " ", "=", " ", 
+   RowBox[{"\[CapitalLambda]0", " ", 
+    SuperscriptBox["T6", "\[Alpha]"]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"$Assumptions", " ", "=", " ", 
+   RowBox[{
+    RowBox[{"T6", " ", ">", " ", "0"}], " ", "&&", " ", 
+    RowBox[{"\[CapitalLambda]0", " ", ">", " ", "0"}], " ", "&&", " ", 
+    RowBox[{"\[Alpha]", "\[Element]", " ", "Reals"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"AppendTo", "[", 
+   RowBox[{"vals", ",", " ", 
+    RowBox[{"\[CapitalLambda]0", "\[Rule]", " ", 
+     RowBox[{"1.2", " ", 
+      SuperscriptBox["10", 
+       RowBox[{"-", "22"}]], " ", 
+      TemplateBox[{
+       InterpretationBox["\[InvisibleSpace]", 1],"\"ergs\"","ergs","\"Ergs\""},
+       "Quantity"], "*", 
+      TemplateBox[{InterpretationBox["\[InvisibleSpace]", 1],RowBox[{
+          SuperscriptBox["\"cm\"", "3"], "\[NegativeMediumSpace]", "\"/\"", 
+          "\[InvisibleSpace]", "\"s\""}],"centimeters cubed per second",
+        FractionBox[
+         SuperscriptBox["\"Centimeters\"", "3"], "\"Seconds\""]},
+       "Quantity"]}]}]}], "]"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.698965463026163*^9, 3.698965501462022*^9}, {
+   3.698965552989744*^9, 3.698965564427693*^9}, {3.698966601689262*^9, 
+   3.698966696778243*^9}, {3.6989735653293123`*^9, 3.698973606923217*^9}, 
+   3.698973674200715*^9, {3.698973709788772*^9, 3.698973709922264*^9}, {
+   3.698973945117127*^9, 3.698973982607685*^9}, {3.698974070450109*^9, 
+   3.698974088139292*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["In Lecture 9, the radiative cooling time is defined as", "Subsubsection",
+ CellChangeTimes->{{3.698965578390523*^9, 3.698965590635695*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{"\[Tau]rad", " ", "=", " ", 
+    FractionBox[
+     RowBox[{"3", " ", "k", " ", "T6"}], 
+     RowBox[{"n10", " ", "\[CapitalLambda]"}]]}], ")"}], " ", "//", 
+  "Framed"}], "\[IndentingNewLine]", 
+ RowBox[{"$Assumptions", " ", "=", " ", 
+  RowBox[{"$Assumptions", " ", "&&", " ", 
+   RowBox[{"k", " ", ">", " ", "0"}], " ", "&&", " ", 
+   RowBox[{"n10", " ", ">", " ", "0"}]}]}]}], "Input",
+ CellChangeTimes->{{3.698965592123776*^9, 3.698965629339054*^9}, {
+  3.698965702069309*^9, 3.698965744252474*^9}, {3.6989668397545757`*^9, 
+  3.6989668410933533`*^9}, {3.698973864692379*^9, 3.6989738694131813`*^9}, {
+  3.69897399268616*^9, 3.6989740161930447`*^9}}],
+
+Cell[BoxData[
+ FrameBox[
+  FractionBox[
+   RowBox[{"3", " ", "k", " ", 
+    SuperscriptBox["T6", 
+     RowBox[{"1", "-", "\[Alpha]"}]]}], 
+   RowBox[{"n10", " ", "\[CapitalLambda]0"}]],
+  StripOnInput->False]], "Output",
+ CellChangeTimes->{{3.698965735121279*^9, 3.6989657449978533`*^9}, 
+   3.698966841337893*^9, 3.6989735100759974`*^9, 3.698973551201762*^9, {
+   3.6989736686484756`*^9, 3.698973677219857*^9}, {3.698973712866928*^9, 
+   3.698973738496529*^9}, {3.698973869851202*^9, 3.698973872693036*^9}, 
+   3.698974098137589*^9, 3.698974279280571*^9, {3.698975217343902*^9, 
+   3.698975231814034*^9}, {3.698975380567018*^9, 3.698975397931842*^9}, 
+   3.698975693202817*^9, 3.6989757687208138`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"T6", ">", "0"}], "&&", 
+  RowBox[{"\[CapitalLambda]0", ">", "0"}], "&&", 
+  RowBox[{"\[Alpha]", "\[Element]", "Reals"}], "&&", 
+  RowBox[{"k", ">", "0"}], "&&", 
+  RowBox[{"n10", ">", "0"}]}]], "Output",
+ CellChangeTimes->{{3.698965735121279*^9, 3.6989657449978533`*^9}, 
+   3.698966841337893*^9, 3.6989735100759974`*^9, 3.698973551201762*^9, {
+   3.6989736686484756`*^9, 3.698973677219857*^9}, {3.698973712866928*^9, 
+   3.698973738496529*^9}, {3.698973869851202*^9, 3.698973872693036*^9}, 
+   3.698974098137589*^9, 3.698974279280571*^9, {3.698975217343902*^9, 
+   3.698975231814034*^9}, {3.698975380567018*^9, 3.698975397931842*^9}, 
+   3.698975693202817*^9, 3.698975768721436*^9}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Part b.", "Section",
+ CellChangeTimes->{{3.69896685339249*^9, 3.6989668557932863`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Also in Lecture 9, we are given an expression for the conductive cooling time \
+as\
+\>", "Subsubsection",
+ CellChangeTimes->{{3.698967001580491*^9, 3.698967002116432*^9}, {
+  3.698967037246786*^9, 3.6989670569848213`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"\[Tau]cond", " ", "=", " ", 
+   FractionBox[
+    RowBox[{"21", " ", "k", " ", "n10", " ", 
+     SuperscriptBox["L9", "2"]}], 
+    RowBox[{"8", " ", "\[Kappa]0", " ", 
+     SuperscriptBox["T6", 
+      RowBox[{"5", "/", "2"}]], " "}]]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"$Assumptions", " ", "=", " ", 
+  RowBox[{"$Assumptions", " ", "&&", " ", 
+   RowBox[{"L9", ">", "0"}], " ", "&&", " ", 
+   RowBox[{"\[Kappa]0", " ", ">", " ", "0"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"AppendTo", "[", 
+   RowBox[{"vals", ",", " ", 
+    RowBox[{"\[Kappa]0", " ", "\[Rule]", " ", 
+     SuperscriptBox["10", 
+      RowBox[{"-", "6"}]]}]}], "]"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.698967071241898*^9, 3.698967110464663*^9}, {
+   3.69896741081059*^9, 3.698967430242878*^9}, {3.69896746335219*^9, 
+   3.698967473236171*^9}, {3.698973465195477*^9, 3.698973502190383*^9}, 
+   3.698973577407259*^9, {3.698973638621221*^9, 3.698973674767963*^9}, {
+   3.6989740352393503`*^9, 3.69897405936866*^9}, {3.69897409456916*^9, 
+   3.698974095399416*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"T6", ">", "0"}], "&&", 
+  RowBox[{"\[CapitalLambda]0", ">", "0"}], "&&", 
+  RowBox[{"\[Alpha]", "\[Element]", "Reals"}], "&&", 
+  RowBox[{"k", ">", "0"}], "&&", 
+  RowBox[{"n10", ">", "0"}], "&&", 
+  RowBox[{"L9", ">", "0"}], "&&", 
+  RowBox[{"\[Kappa]0", ">", "0"}]}]], "Output",
+ CellChangeTimes->{
+  3.698974098157838*^9, 3.6989742793001423`*^9, {3.6989752173641243`*^9, 
+   3.6989752318334723`*^9}, {3.69897538058925*^9, 3.6989753979360313`*^9}, 
+   3.698975693225317*^9, 3.698975768739751*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Set the two cooling times equal and solve for the electron number density\
+\>", "Subsubsection",
+ CellChangeTimes->{{3.698967509825013*^9, 3.698967515583044*^9}, 
+   3.6989736886054773`*^9, {3.6989737602941093`*^9, 3.6989737731802397`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{"n10b", " ", "=", " ", 
+    RowBox[{"Part", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"Solve", "[", 
+        RowBox[{
+         RowBox[{"\[Tau]rad", " ", "\[Equal]", " ", "\[Tau]cond"}], ",", " ", 
+         "n10"}], "]"}], "//", "FullSimplify"}], ",", "2", ",", "1", ",", 
+      "2"}], "]"}]}], ")"}], "//", "Framed"}]], "Input",
+ CellChangeTimes->{{3.6989738388124313`*^9, 3.698973884595501*^9}, {
+  3.698974115192337*^9, 3.698974116259742*^9}, {3.698974187832535*^9, 
+  3.698974296442073*^9}, {3.698975178158386*^9, 3.698975178202881*^9}}],
+
+Cell[BoxData[
+ FrameBox[
+  FractionBox[
+   RowBox[{"2", " ", 
+    SqrtBox[
+     FractionBox["2", "7"]], " ", 
+    SuperscriptBox["T6", 
+     RowBox[{
+      FractionBox["7", "4"], "-", 
+      FractionBox["\[Alpha]", "2"]}]], " ", 
+    SqrtBox[
+     FractionBox["\[Kappa]0", "\[CapitalLambda]0"]]}], "L9"],
+  StripOnInput->False]], "Output",
+ CellChangeTimes->{
+  3.6989742969363937`*^9, {3.698975217384809*^9, 3.698975231853297*^9}, {
+   3.698975380619555*^9, 3.698975397958943*^9}, 3.698975693249724*^9, 
+   3.698975768759803*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Solve for where the derivative with respect to temperature of the above \
+expression is positive as a function of \[Alpha].\
+\>", "Subsubsection",
+ CellChangeTimes->{{3.6989743422312183`*^9, 3.698974386024577*^9}, {
+  3.698974553787929*^9, 3.698974561657919*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"Reduce", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"D", "[", 
+       RowBox[{"n10b", ",", "T6"}], "]"}], " ", ">", "0"}], ",", "\[Alpha]"}],
+     "]"}], " ", "//", "Simplify"}], " ", "//", "Framed"}]], "Input",
+ CellChangeTimes->{{3.6989745178501368`*^9, 3.698974587855464*^9}, {
+  3.698974808298686*^9, 3.698974810087977*^9}, {3.698974867777547*^9, 
+  3.69897486794275*^9}, {3.6989751585056057`*^9, 3.698975165728359*^9}, {
+  3.698975229203265*^9, 3.69897522929189*^9}, {3.698975265163372*^9, 
+  3.698975278671*^9}, {3.6989753744575243`*^9, 3.6989753750433617`*^9}, {
+  3.698975700371264*^9, 3.698975702160118*^9}, {3.698975878096238*^9, 
+  3.698975922999934*^9}}],
+
+Cell[BoxData[
+ FrameBox[
+  RowBox[{
+   RowBox[{"2", " ", "\[Alpha]"}], "<", "7"}],
+  StripOnInput->False]], "Output",
+ CellChangeTimes->{
+  3.6989745914365597`*^9, 3.698974810679139*^9, 3.698974874882084*^9, 
+   3.6989751663089533`*^9, {3.698975217423869*^9, 3.698975231897387*^9}, {
+   3.6989752685356607`*^9, 3.698975279103117*^9}, {3.6989753806593657`*^9, 
+   3.698975397977161*^9}, 3.698975693286234*^9, 3.6989757687841997`*^9, {
+   3.6989758862484703`*^9, 3.698975923429392*^9}}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Part c.", "Section",
+ CellChangeTimes->{{3.698975938034704*^9, 3.698975939649239*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Solve Equation 2 in the problem statement for temperature", \
+"Subsubsection",
+ CellChangeTimes->{{3.698976941477028*^9, 3.698976959294739*^9}, {
+  3.698976993436726*^9, 3.698977003777149*^9}, {3.6989770972825947`*^9, 
+  3.6989771273408127`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"T6c", " ", "=", " ", 
+   FractionBox["\[CurlyEpsilon]", 
+    RowBox[{"3", " ", "L9", " ", "k", " ", "n10"}]]}], ";"}]], "Input",
+ CellChangeTimes->{{3.6989771297983*^9, 3.698977270241549*^9}}]
+}, Open  ]],
+
+Cell["Plug this into the condition ", "Subsubsection",
+ CellChangeTimes->{{3.698977290465701*^9, 3.698977296333941*^9}}]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{959, 1025},
+WindowMargins->{{Automatic, 2171}, {-104, Automatic}},
+FrontEndVersion->"11.0 for Linux x86 (64-bit) (September 21, 2016)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 138, 5, 156, "Chapter"],
+Cell[721, 29, 139, 2, 32, "Input"],
+Cell[CellGroupData[{
+Cell[885, 35, 92, 1, 65, "Section"],
+Cell[CellGroupData[{
+Cell[1002, 40, 144, 1, 35, "Subsubsection"],
+Cell[1149, 43, 238, 5, 34, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1424, 53, 188, 4, 35, "Subsubsection"],
+Cell[1615, 59, 1543, 33, 91, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3195, 97, 145, 1, 35, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[3365, 102, 706, 15, 77, "Input"],
+Cell[4074, 119, 702, 14, 63, "Output"],
+Cell[4779, 135, 718, 13, 32, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5558, 155, 93, 1, 65, "Section"],
+Cell[CellGroupData[{
+Cell[5676, 160, 232, 5, 35, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[5933, 169, 1086, 24, 113, "Input"],
+Cell[7022, 195, 533, 12, 32, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[7604, 213, 250, 4, 35, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[7879, 221, 599, 14, 34, "Input"],
+Cell[8481, 237, 530, 16, 88, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9060, 259, 273, 5, 59, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[9358, 268, 717, 15, 34, "Input"],
+Cell[10078, 285, 484, 10, 44, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[10623, 302, 92, 1, 65, "Section"],
+Cell[CellGroupData[{
+Cell[10740, 307, 252, 4, 35, "Subsubsection"],
+Cell[10995, 313, 227, 5, 50, "Input"]
+}, Open  ]],
+Cell[11237, 321, 120, 1, 35, "Subsubsection"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+

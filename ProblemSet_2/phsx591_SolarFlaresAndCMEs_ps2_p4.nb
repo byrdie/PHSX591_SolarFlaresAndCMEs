@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[      4556,        163]
-NotebookOptionsPosition[      3644,        125]
-NotebookOutlinePosition[      3992,        140]
-CellTagsIndexPosition[      3949,        137]
+NotebookDataLength[     13651,        420]
+NotebookOptionsPosition[     11941,        355]
+NotebookOutlinePosition[     12284,        370]
+CellTagsIndexPosition[     12241,        367]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -38,94 +38,324 @@ Cell["Problem 4", "Section",
 
 Cell[CellGroupData[{
 
-Cell[BoxData[
- RowBox[{"$Assumptions", " ", "=", " ", 
-  RowBox[{
-   RowBox[{"Tb", " ", ">", " ", "0"}], " ", "&&", " ", 
-   RowBox[{"Teff", " ", ">", "0"}], " ", "&&", 
-   RowBox[{"\[Tau]\[Nu]", " ", ">", "0"}]}]}]], "Input",
- CellChangeTimes->{{3.6975628959390635`*^9, 3.697562910940541*^9}, {
-  3.697562961900797*^9, 3.697562971754796*^9}}],
+Cell["Thermal Bremsstrahlung", "Subsection",
+ CellChangeTimes->{{3.697588328280757*^9, 3.697588329263824*^9}, {
+   3.6975883954250927`*^9, 3.6975883976442633`*^9}, 3.6975884503514977`*^9}],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Gary and Hurford 2004 gives the frequency at which thermal bremsstrahlung \
+reaches optical depth unity as approximately\
+\>", "Subsubsection",
+ CellChangeTimes->{{3.697588434022519*^9, 3.697588495861034*^9}}],
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"Tb", ">", "0"}], "&&", 
-  RowBox[{"Teff", ">", "0"}], "&&", 
-  RowBox[{"\[Tau]\[Nu]", ">", "0"}]}]], "Output",
- CellChangeTimes->{
-  3.697562975114502*^9, {3.6975630712106037`*^9, 3.697563085149441*^9}}]
+  RowBox[{"\[Nu]tb", " ", "=", " ", 
+   RowBox[{"0.5", " ", "ne", " ", 
+    SuperscriptBox["T", 
+     RowBox[{
+      RowBox[{"-", "3"}], "/", "4"}]], 
+    SuperscriptBox["L", 
+     RowBox[{"1", "/", "2"}]]}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.697588482938343*^9, 3.697588531067903*^9}, 
+   3.6975887810914097`*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell["\<\
-From Dulk 2005, the relationship between optical depth, effective \
-temperature, and brightness temperature is given by\
+Use the scale height also provided in Gary and Hurford (2004)\
 \>", "Subsubsection",
- CellChangeTimes->{{3.697562435673134*^9, 3.697562477269862*^9}, {
-  3.6975627354387226`*^9, 3.6975627621346273`*^9}}],
+ CellChangeTimes->{{3.697588633419792*^9, 3.697588651617977*^9}, {
+  3.697589260379122*^9, 3.6975892622192373`*^9}}],
 
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"d", "=", 
-  RowBox[{"Tb", " ", "\[Equal]", " ", 
-   RowBox[{"Teff", 
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"L", " ", "=", " ", 
+   RowBox[{"H0", " ", 
     RowBox[{"(", 
-     RowBox[{"1", "-", 
-      RowBox[{"Exp", "[", 
-       RowBox[{"-", "\[Tau]\[Nu]"}], "]"}]}], ")"}]}]}]}]], "Input",
- CellChangeTimes->{{3.6975627676929517`*^9, 3.6975628145348783`*^9}}],
+     FractionBox["T", "T0"], ")"}], 
+    SuperscriptBox[
+     RowBox[{"(", 
+      FractionBox["R", "Rs"], ")"}], "2"]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"H0", " ", "=", " ", 
+   RowBox[{"0.1", " ", "Rs"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"T0", " ", "=", " ", 
+   RowBox[{"2", " ", 
+    SuperscriptBox["10", "6"]}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.697588653088211*^9, 3.697588703544273*^9}, 
+   3.697588769198386*^9, {3.697588816087463*^9, 3.697588816120596*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Use the hydrostatic equilibrium model for number density given by Mann et al \
+(1997)\
+\>", "Subsubsection",
+ CellChangeTimes->{{3.697589227920877*^9, 3.697589273831056*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"N2", " ", "=", " ", 
+   RowBox[{"Ns", " ", 
+    RowBox[{"Exp", "[", 
+     RowBox[{
+      FractionBox["A", "Rs"], 
+      RowBox[{"(", 
+       RowBox[{
+        FractionBox["Rs", "R"], "-", "1"}], ")"}]}], "]"}]}]}], " ", 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"A", " ", "=", " ", 
+   FractionBox[
+    RowBox[{"\[Mu]", " ", "G", " ", "Ms", " ", "Mp"}], 
+    RowBox[{"k", " ", "T"}]]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"N2v", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Ns", "\[Rule]", " ", 
+      RowBox[{"8.29", " ", 
+       SuperscriptBox["10", "8"]}]}], ",", " ", 
+     RowBox[{"\[Mu]", "\[Rule]", " ", "0.6"}], ",", " ", 
+     RowBox[{"G", "\[Rule]", " ", 
+      RowBox[{"6.674", " ", 
+       SuperscriptBox["10", 
+        RowBox[{"-", "8"}]]}]}], ",", 
+     RowBox[{"Ms", "\[Rule]", " ", 
+      RowBox[{"1.988", " ", 
+       SuperscriptBox["10", "33"]}]}], ",", " ", 
+     RowBox[{"k", "\[Rule]", " ", 
+      RowBox[{"1.38", " ", 
+       SuperscriptBox["10", 
+        RowBox[{"-", "16"}]]}]}], ",", 
+     RowBox[{"T", "\[Rule]", " ", 
+      RowBox[{"2", " ", 
+       SuperscriptBox["10", "6"]}]}], ",", 
+     RowBox[{"Rs", "\[Rule]", " ", 
+      RowBox[{"6.957", " ", 
+       SuperscriptBox["10", "10"]}]}], ",", 
+     RowBox[{"Mp", "\[Rule]", " ", 
+      RowBox[{"1.672", " ", 
+       SuperscriptBox["10", 
+        RowBox[{"-", "24"}]]}]}]}], "}"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.697349797301712*^9, 3.697349845713168*^9}, {
+   3.6973499107368717`*^9, 3.697350030665031*^9}, {3.6973500863805847`*^9, 
+   3.697350137949703*^9}, 3.6973502563595552`*^9, {3.69735182986217*^9, 
+   3.6973518303575487`*^9}, {3.6973543758315363`*^9, 
+   3.6973544078025913`*^9}, {3.697354441403941*^9, 3.6973544658336687`*^9}, {
+   3.697354627151421*^9, 3.697354631927391*^9}, {3.697589295323555*^9, 
+   3.6975892955556097`*^9}, {3.6975893631781387`*^9, 
+   3.6975893638552637`*^9}, {3.697589427872025*^9, 3.697589437404273*^9}, {
+   3.697589615803461*^9, 3.697589667669223*^9}, {3.697589795393382*^9, 
+   3.69758979732697*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Now we are free to calculate the frequency (in GHz)", "Subsubsection",
+ CellChangeTimes->{{3.6975894980587473`*^9, 3.697589506794887*^9}, {
+  3.697589978194874*^9, 3.697590004137178*^9}}],
+
+Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"Tb", "\[Equal]", 
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"\[Nu]tb", " ", "/", 
+        SuperscriptBox["10", "9"]}], " ", "/.", " ", 
+       RowBox[{"ne", "\[Rule]", " ", "N2"}]}], " ", "/.", " ", 
+      RowBox[{"R", " ", "\[Rule]", " ", 
+       RowBox[{"1.005", " ", "Rs"}]}]}], " ", "/.", " ", 
+     RowBox[{"T", "\[Rule]", " ", "T0"}]}], " ", "/.", " ", "N2v"}], " ", 
+   ")"}], " ", "//", "Framed"}]], "Input",
+ CellChangeTimes->{{3.6975887890809793`*^9, 3.697588790594198*^9}, {
+  3.697589513717183*^9, 3.6975895525801373`*^9}, {3.697589766638288*^9, 
+  3.697589767546041*^9}, {3.6975898163748198`*^9, 3.697589818843892*^9}, {
+  3.697589971980666*^9, 3.6975900185526743`*^9}, {3.6975915341671877`*^9, 
+  3.697591575416482*^9}}],
+
+Cell[BoxData[
+ FrameBox["0.6311772364218391`",
+  StripOnInput->False]], "Output",
+ CellChangeTimes->{{3.697588759443458*^9, 3.697588818741213*^9}, 
+   3.697588860270918*^9, 3.697588984202795*^9, 3.6975890246754417`*^9, 
+   3.69758932920408*^9, 3.69758936871525*^9, {3.6975895261844893`*^9, 
+   3.697589553094968*^9}, {3.69758967235804*^9, 3.697589679465913*^9}, 
+   3.6975897683875723`*^9, {3.697589802196151*^9, 3.69758984293419*^9}, {
+   3.697589921998925*^9, 3.697589943000985*^9}, {3.69758999709403*^9, 
+   3.697590018959034*^9}, 3.697590100674204*^9, {3.697590557164546*^9, 
+   3.6975905789874372`*^9}, {3.6975915553790092`*^9, 3.697591586513712*^9}, 
+   3.697591891692626*^9, 3.69759198611724*^9, 3.697592137382612*^9, 
+   3.697592359401629*^9, 3.697592601784052*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell["\<\
+Which is approximately where the brightness temperature starts to roll over \
+in Figure 2 in the problem statement.\
+\>", "Subsubsection",
+ CellChangeTimes->{{3.697590029770138*^9, 3.697590079129242*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Thermal Gyrosychrotron", "Subsection",
+ CellChangeTimes->{{3.697590106719823*^9, 3.6975901166187963`*^9}, {
+  3.697590887157783*^9, 3.697590889998522*^9}, {3.697591014664836*^9, 
+  3.697591018309104*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Dulk (1985) gives the optical unity frequency as", "Subsubsection",
+ CellChangeTimes->{{3.6975910420809813`*^9, 3.697591069263013*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"N2v", " ", "=", "  ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Ns", "\[Rule]", 
+      RowBox[{"1.21", " ", 
+       SuperscriptBox["10", "15"]}]}], ",", " ", 
+     RowBox[{"\[Mu]", "\[Rule]", " ", "0.6"}], ",", " ", 
+     RowBox[{"G", "\[Rule]", " ", 
+      RowBox[{"6.674", " ", 
+       SuperscriptBox["10", 
+        RowBox[{"-", "8"}]]}]}], ",", 
+     RowBox[{"Ms", "\[Rule]", " ", 
+      RowBox[{"1.988", " ", 
+       SuperscriptBox["10", "33"]}]}], ",", " ", 
+     RowBox[{"k", "\[Rule]", " ", 
+      RowBox[{"1.38", " ", 
+       SuperscriptBox["10", 
+        RowBox[{"-", "16"}]]}]}], ",", 
+     RowBox[{"T", "\[Rule]", " ", 
+      RowBox[{"1", " ", 
+       SuperscriptBox["10", "8"]}]}], ",", 
+     RowBox[{"Rs", "\[Rule]", " ", 
+      RowBox[{"6.957", " ", 
+       SuperscriptBox["10", "10"]}]}], ",", 
+     RowBox[{"Mp", "\[Rule]", " ", 
+      RowBox[{"1.672", " ", 
+       SuperscriptBox["10", 
+        RowBox[{"-", "24"}]]}]}]}], "}"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.6975920382920923`*^9, 3.697592040393639*^9}, {
+  3.697592111024355*^9, 3.6975921182175407`*^9}, {3.697592351467628*^9, 
+  3.6975923556661377`*^9}, {3.697592587130315*^9, 3.697592597817005*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[Nu]tg", " ", "=", " ", 
   RowBox[{
+   RowBox[{
+    RowBox[{"475", " ", 
+     SuperscriptBox[
+      RowBox[{"(", 
+       FractionBox[
+        RowBox[{"N", " ", "L"}], "B"], ")"}], "0.05"], 
+     SuperscriptBox[
+      RowBox[{"Sin", "[", "\[Theta]", "]"}], "0.6"], 
+     SuperscriptBox["T", "0.5"], "B"}], " ", "/.", " ", 
+    RowBox[{"\[Theta]", "\[Rule]", " ", 
+     RowBox[{"10", " ", 
+      RowBox[{"\[Pi]", " ", "/", "180"}]}]}]}], " ", "/.", " ", 
+   RowBox[{"N", "\[Rule]", " ", "N2"}]}]}]], "Input",
+ CellChangeTimes->{{3.697591070989511*^9, 3.6975911496656923`*^9}, {
+  3.697591201587563*^9, 3.697591215244577*^9}, {3.69759163180112*^9, 
+  3.697591668505781*^9}, {3.697592124008943*^9, 3.69759212499909*^9}}],
+
+Cell[BoxData[
+ RowBox[{"71.68763413376156`", " ", "B", " ", 
+  SuperscriptBox["T", "0.5`"], " ", 
+  SuperscriptBox[
    RowBox[{"(", 
-    RowBox[{"1", "-", 
-     SuperscriptBox["\[ExponentialE]", 
-      RowBox[{"-", "\[Tau]\[Nu]"}]]}], ")"}], " ", "Teff"}]}]], "Output",
- CellChangeTimes->{{3.6975628089326277`*^9, 3.6975628201592164`*^9}, 
-   3.6975629143947816`*^9, 3.6975629751416063`*^9, {3.6975630712236495`*^9, 
-   3.6975630851632595`*^9}}]
+    FractionBox[
+     RowBox[{
+      SuperscriptBox["\[ExponentialE]", 
+       FractionBox[
+        RowBox[{"G", " ", "Mp", " ", "Ms", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"-", "1"}], "+", 
+           FractionBox["Rs", "R"]}], ")"}], " ", "\[Mu]"}], 
+        RowBox[{"k", " ", "Rs", " ", "T"}]]], " ", "Ns", " ", 
+      SuperscriptBox["R", "2"], " ", "T"}], 
+     RowBox[{"B", " ", "Rs"}]], ")"}], "0.05`"]}]], "Output",
+ CellChangeTimes->{3.697591668741489*^9, 3.697591891773122*^9, 
+  3.6975919861967573`*^9, 3.697592137476363*^9, 3.6975923594973*^9, 
+  3.697592601976406*^9}]
 }, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
-Cell["Solve this expression for the optical depth", "Subsubsection",
- CellChangeTimes->{{3.697562826110171*^9, 3.6975628321577744`*^9}}],
+Cell["Hurford and Gary (2004) use the magnetic field", "Subsubsection",
+ CellChangeTimes->{{3.697591652385872*^9, 3.6975916622800007`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"B", " ", "=", " ", 
+   RowBox[{"0.5", " ", 
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{
+       FractionBox["R", "Rs"], "-", "1"}], ")"}], "1.5"]}]}], ";"}]], "Input",\
+
+ CellChangeTimes->{{3.697591677227192*^9, 3.697591697535687*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Evaluate frequency", "Subsubsection",
+ CellChangeTimes->{{3.697591708287319*^9, 3.697591715483365*^9}}],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"\[Tau]\[Nu]", " ", "=", " ", 
-  RowBox[{"Part", "[", 
+ RowBox[{
+  RowBox[{"(", 
    RowBox[{
-    RowBox[{"Solve", "[", 
-     RowBox[{"d", ",", "\[Tau]\[Nu]"}], "]"}], ",", "1", ",", "1", ",", "2", 
-    ",", "1", ",", "2"}], "]"}]}]], "Input",
- CellChangeTimes->{{3.6975628363331203`*^9, 3.697562868285901*^9}, {
-  3.6975630379579573`*^9, 3.6975630811286054`*^9}}],
+    RowBox[{"\[Nu]tg", " ", "/.", 
+     RowBox[{"R", "\[Rule]", " ", 
+      RowBox[{"1.003", " ", "Rs"}]}]}], "/.", " ", "N2v"}], ")"}], " ", "//", 
+  "Framed"}]], "Input",
+ CellChangeTimes->{{3.697591757689374*^9, 3.697591868665131*^9}, {
+  3.697591907360156*^9, 3.697591924330078*^9}, {3.697592130157221*^9, 
+  3.69759213507987*^9}, {3.6975922951855783`*^9, 3.6975923034602757`*^9}, {
+  3.697592362949409*^9, 3.697592363125152*^9}, {3.6975927715922937`*^9, 
+  3.697592775178719*^9}}],
 
 Cell[BoxData[
- RowBox[{"Log", "[", 
-  FractionBox["Teff", 
-   RowBox[{
-    RowBox[{"-", "Tb"}], "+", "Teff"}]], "]"}]], "Output",
+ FrameBox["4685.381919884994`",
+  StripOnInput->False]], "Output",
  CellChangeTimes->{
-  3.6975628687542276`*^9, 3.697562914410297*^9, 3.6975629751535664`*^9, {
-   3.697563058928461*^9, 3.6975630851763115`*^9}}]
+  3.6975917619297028`*^9, {3.697591825347365*^9, 3.697591931679469*^9}, 
+   3.697591986292789*^9, 3.697592137574988*^9, {3.697592296782754*^9, 
+   3.697592304245779*^9}, {3.697592359601241*^9, 3.697592363347004*^9}, 
+   3.69759260230215*^9, 3.6975927755763187`*^9}]
 }, Open  ]]
 }, Open  ]],
 
-Cell["Brightness temperature is defined as", "Subsubsection",
- CellChangeTimes->{{3.6975808844291196`*^9, 3.6975808944368086`*^9}}]
+Cell["This does not look right by many orders of magnitude.", "Subsubsection",
+ CellChangeTimes->{{3.697592780007375*^9, 3.6975927922256393`*^9}}]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]]
 },
 WindowSize->{1500, 957},
-WindowMargins->{{-8, Automatic}, {Automatic, -8}},
-FrontEndVersion->"11.0 for Microsoft Windows (64-bit) (September 21, 2016)",
+WindowMargins->{{Automatic, 2128}, {-23, Automatic}},
+FrontEndVersion->"11.0 for Linux x86 (64-bit) (September 21, 2016)",
 StyleDefinitions->"Default.nb"
 ]
 (* End of Notebook Content *)
@@ -140,29 +370,56 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[580, 22, 137, 5, 174, "Chapter"],
-Cell[720, 29, 143, 2, 30, "Input"],
+Cell[580, 22, 137, 5, 156, "Chapter"],
+Cell[720, 29, 143, 2, 32, "Input"],
 Cell[CellGroupData[{
-Cell[888, 35, 96, 1, 70, "Section"],
+Cell[888, 35, 96, 1, 65, "Section"],
 Cell[CellGroupData[{
-Cell[1009, 40, 343, 7, 30, "Input"],
-Cell[1355, 49, 238, 6, 30, "Output"]
+Cell[1009, 40, 188, 2, 45, "Subsection"],
+Cell[CellGroupData[{
+Cell[1222, 46, 219, 4, 35, "Subsubsection"],
+Cell[1444, 52, 345, 10, 36, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[1630, 60, 271, 5, 39, "Subsubsection"],
+Cell[1826, 67, 211, 4, 35, "Subsubsection"],
+Cell[2040, 73, 611, 17, 102, "Input"]
+}, Open  ]],
 Cell[CellGroupData[{
-Cell[1926, 69, 300, 8, 30, "Input"],
-Cell[2229, 79, 382, 9, 30, "Output"]
+Cell[2688, 95, 184, 4, 35, "Subsubsection"],
+Cell[2875, 101, 2106, 54, 127, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5018, 160, 193, 2, 35, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[5236, 166, 783, 18, 41, "Input"],
+Cell[6022, 186, 773, 12, 44, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[6822, 202, 214, 4, 35, "Subsubsection"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[7073, 211, 210, 3, 45, "Subsection"],
+Cell[CellGroupData[{
+Cell[7308, 218, 141, 1, 35, "Subsubsection"],
+Cell[7452, 221, 1219, 32, 41, "Input"],
+Cell[CellGroupData[{
+Cell[8696, 257, 741, 18, 53, "Input"],
+Cell[9440, 277, 741, 19, 90, "Output"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[2660, 94, 136, 1, 39, "Subsubsection"],
+Cell[10230, 302, 139, 1, 35, "Subsubsection"],
+Cell[10372, 305, 279, 9, 53, "Input"]
+}, Open  ]],
 Cell[CellGroupData[{
-Cell[2821, 99, 360, 8, 30, "Input"],
-Cell[3184, 109, 274, 7, 44, "Output"]
+Cell[10688, 319, 109, 1, 35, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[10822, 324, 537, 12, 32, "Input"],
+Cell[11362, 338, 366, 7, 44, "Output"]
 }, Open  ]]
 }, Open  ]],
-Cell[3485, 120, 131, 1, 39, "Subsubsection"]
+Cell[11755, 349, 146, 1, 35, "Subsubsection"]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]]
 }
