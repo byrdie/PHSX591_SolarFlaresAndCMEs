@@ -1,0 +1,61 @@
+This is BibTeX, Version 0.99d (TeX Live 2015/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: Smart_SolarFlaresAndCMEs_FinalProject_Prosoal.aux
+The style file: biblatex.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: Smart_SolarFlaresAndCMEs_FinalProject_Prosoal-blx.bib
+Database file #2: sources.bib
+Biblatex version: 3.3
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
+You've used 2 entries,
+            6047 wiz_defined-function locations,
+            1142 strings with 8474 characters,
+and the built_in function-call counts, 4239 in all, are:
+= -- 152
+> -- 148
+< -- 27
++ -- 61
+- -- 57
+* -- 260
+:= -- 455
+add.period$ -- 0
+call.type$ -- 2
+change.case$ -- 11
+chr.to.int$ -- 40
+cite$ -- 2
+duplicate$ -- 362
+empty$ -- 442
+format.name$ -- 48
+if$ -- 945
+int.to.chr$ -- 0
+int.to.str$ -- 2
+missing$ -- 0
+newline$ -- 55
+num.names$ -- 41
+pop$ -- 347
+preamble$ -- 1
+purify$ -- 12
+quote$ -- 0
+skip$ -- 236
+stack$ -- 0
+substring$ -- 151
+swap$ -- 149
+text.length$ -- 40
+text.prefix$ -- 1
+top$ -- 1
+type$ -- 64
+warning$ -- 0
+while$ -- 75
+width$ -- 0
+write$ -- 52
