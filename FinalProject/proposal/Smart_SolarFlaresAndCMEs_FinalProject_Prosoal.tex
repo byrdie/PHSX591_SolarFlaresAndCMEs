@@ -1,0 +1,23 @@
+\documentclass[10pt,letterpaper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\author{Roy Smart}
+\title{GPU-Accelerated 1D Hydrodynamic Loop Model \\ PHSX 591 Solar Flares \& CMEs \\ Final Project Proposal}
+
+\usepackage[backend=bibtex, style=authoryear]{biblatex}
+\addbibresource{sources.bib}
+\usepackage{hyperref}
+
+\begin{document}
+	
+	\maketitle
+	
+	We propose to estimate the energy requirements of flare loop systems through the use of a numerical loop model. This model will solve the one-dimensional gas-dynamic equations given by \cite{2014ApJ...795...10L} using the finite difference method. This numerical model will be designed to be executed on a graphics processing unit (GPU) to utilize the immense floating-point performance of our GPU. We hope that this promise of increased performance will allow larger loop simulations as compared to previous models.
+	
+	\printbibliography
+	
+\end{document}
