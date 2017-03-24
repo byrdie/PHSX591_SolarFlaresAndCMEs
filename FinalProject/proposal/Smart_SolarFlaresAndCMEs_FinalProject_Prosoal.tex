@@ -16,7 +16,12 @@
 	
 	\maketitle
 	
-	We propose to estimate the energy requirements of flare loop systems through the use of a numerical loop model. This model will solve the one-dimensional gas-dynamic equations given by \cite{2014ApJ...795...10L} using the finite difference method. This numerical model will be designed to be executed on a graphics processing unit (GPU) to utilize the immense floating-point performance of our GPU. We hope that this promise of increased performance will allow larger loop simulations as compared to previous models.
+	We propose to simulate post-flare loops using a one-dimensional hydrodynamic model and use it to match observations of loop cooling. Our model will solve the 1D gas-dynamic equations given by \cite{2014ApJ...795...10L}. This will be achieved using the explicit finite difference method implemented on a graphics processing unit (GPU) to leverage the GPU's immense parallelism. The high performance offered by a GPU should allow for the simulation of larger loop systems than provided by previous studies.
+	
+	To verify our model we will reproduce the results contained in \cite{2014ApJ...795...10L}. Since this model is an explicit model, we would also like to do tests to characterize the numerical stability of the model by testing it over a variety of temporal and spatial scales.
+	
+	Once the model has been verified, we will attempt to match SDO/AIA observations of loop cooling by adjusting the amount of energy input, the temporal profile of the energy input, and the thermal conductivity of the plasma. Using these free parameters, we will use regression to reproduce the time-delay between brightenings observed in the various AIA EUV channels.
+	
 	
 	\printbibliography
 	

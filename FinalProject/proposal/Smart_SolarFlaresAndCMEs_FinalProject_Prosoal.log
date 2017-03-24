@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.11.8)  21 MAR 2017 23:19
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.11.8)  22 MAR 2017 19:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -588,23 +588,18 @@ LaTeX Font Info:    Try loading font information for U+msb on input line 18.
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 23.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 28.
  [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 23.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 28.
 
 (./Smart_SolarFlaresAndCMEs_FinalProject_Prosoal.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 23.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 23.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 28.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 28.
 Package rerunfilecheck Info: File `Smart_SolarFlaresAndCMEs_FinalProject_Prosoa
 l.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-
-
-Package biblatex Warning: Please rerun LaTeX.
-(biblatex)                Page breaks have changed.
-
 Package logreq Info: Writing requests to 'Smart_SolarFlaresAndCMEs_FinalProject
 _Prosoal.run.xml'.
 \openout1 = `Smart_SolarFlaresAndCMEs_FinalProject_Prosoal.run.xml'.
@@ -612,10 +607,10 @@ _Prosoal.run.xml'.
  )
 (\end occurred when \iftrue on line 15 was incomplete) 
 Here is how much of TeX's memory you used:
- 11169 strings out of 493029
- 174943 string characters out of 6136234
- 355835 words of memory out of 5000000
- 14582 multiletter control sequences out of 15000+600000
+ 11168 strings out of 493029
+ 174933 string characters out of 6136234
+ 356835 words of memory out of 5000000
+ 14581 multiletter control sequences out of 15000+600000
  11703 words of font info for 46 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  35i,6n,45p,863b,1018s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -627,11 +622,11 @@ public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
 amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
 s/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
 mtt10.pfb>
-Output written on Smart_SolarFlaresAndCMEs_FinalProject_Prosoal.pdf (1 page, 85
-055 bytes).
+Output written on Smart_SolarFlaresAndCMEs_FinalProject_Prosoal.pdf (1 page, 86
+556 bytes).
 PDF statistics:
- 48 PDF objects out of 1000 (max. 8388607)
- 37 compressed objects within 1 object stream
+ 49 PDF objects out of 1000 (max. 8388607)
+ 38 compressed objects within 1 object stream
  4 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
