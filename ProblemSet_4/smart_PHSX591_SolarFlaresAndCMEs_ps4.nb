@@ -1,0 +1,274 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      7937,        266]
+NotebookOptionsPosition[      6828,        221]
+NotebookOutlinePosition[      7161,        236]
+CellTagsIndexPosition[      7118,        233]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["\<\
+Roy Smart
+PHSX 591 Solar Flares & CMEs
+Problem Set 4\
+\>", "Chapter",
+ CellChangeTimes->{{3.7010928548197727`*^9, 3.7010928841607437`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Part a.", "Section",
+ CellChangeTimes->{{3.701092889905541*^9, 3.701092898159749*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Clear variables from memory", "Subsubsection",
+ CellChangeTimes->{{3.701092918733963*^9, 3.7010929271239367`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Clear", "[", "\"\<Global`*\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.701092930074554*^9, 3.701092936251274*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+The Fokker-Planck equation is given in the problem statement as\
+\>", "Subsubsection",
+ CellChangeTimes->{{3.701092995524396*^9, 3.701093008637381*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"FP", " ", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      SubscriptBox["\[PartialD]", "t"], 
+      RowBox[{"f", "[", 
+       RowBox[{"v", ",", "t"}], "]"}]}], " ", "\[Equal]", " ", 
+     RowBox[{
+      SubscriptBox["\[PartialD]", "v"], 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         FractionBox[
+          RowBox[{"\[CapitalKappa]", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             SuperscriptBox["v", "2"], "-", 
+             RowBox[{"2", 
+              SuperscriptBox["vt", "2"]}]}], ")"}]}], 
+          SuperscriptBox["v", "4"]], 
+         RowBox[{"f", "[", 
+          RowBox[{"v", ",", "t"}], "]"}]}], "+", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           FractionBox[
+            RowBox[{"\[CapitalKappa]", " ", 
+             SuperscriptBox["vt", "2"]}], 
+            SuperscriptBox["v", "3"]], "+", "Dturb"}], ")"}], 
+         RowBox[{
+          SubscriptBox["\[PartialD]", "v"], 
+          RowBox[{"f", "[", 
+           RowBox[{"v", ",", "t"}], "]"}]}]}]}], ")"}]}]}], " ", "//", 
+    "Hold"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.701093010582164*^9, 3.701093040648985*^9}, {
+   3.701093143413804*^9, 3.701093278597892*^9}, {3.701093309610018*^9, 
+   3.70109335347675*^9}, {3.7010933866548777`*^9, 3.7010934715551*^9}, 
+   3.701093619567329*^9, {3.701093956045487*^9, 3.7010939571183662`*^9}, 
+   3.7010947760712843`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+On page 29 of Lecture 17 the Maxwellian distribution is given as\
+\>", "Subsubsection",
+ CellChangeTimes->{{3.701093524422078*^9, 3.701093571726264*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"fm", "[", 
+    RowBox[{"v", ",", "t"}], "]"}], "=", " ", 
+   RowBox[{
+    FractionBox[
+     RowBox[{"4", " ", "\[Pi]", " ", "n"}], 
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"2", " ", "\[Pi]", " ", "k", " ", 
+        RowBox[{"T", " ", "/", "m"}]}], ")"}], 
+      RowBox[{"3", "/", "2"}]]], 
+    SuperscriptBox["v", "2"], 
+    RowBox[{"Exp", "[", 
+     RowBox[{"-", 
+      FractionBox[
+       RowBox[{"m", " ", 
+        SuperscriptBox["v", "2"]}], 
+       RowBox[{"2", " ", "k", " ", "T"}]]}], "]"}]}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.701093673506439*^9, 3.701093751311082*^9}, 
+   3.701093789162182*^9, 3.7010939227751713`*^9, 3.701095392425509*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "Check that this distribution satisfies the Fokker-Planck equation by taking \
+Dturb to zero, evaluating v at ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["v", "th"], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " and using the definition of ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["v", "th"], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ "."
+}], "Subsubsection",
+ CellChangeTimes->{{3.701094438755691*^9, 3.701094519095064*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"FP", " ", "/.", " ", 
+         RowBox[{
+          RowBox[{"f", "[", 
+           RowBox[{"v", ",", "t"}], "]"}], "\[Rule]", " ", 
+          RowBox[{"fm", "[", 
+           RowBox[{"v", ",", "t"}], "]"}]}]}], "/.", " ", 
+        RowBox[{"Dturb", " ", "\[Rule]", "0"}]}], "//", "ReleaseHold"}], 
+      ")"}], " ", "/.", " ", 
+     RowBox[{"v", "\[Rule]", " ", "vt"}]}], " ", "/.", " ", 
+    RowBox[{"vt", " ", "\[Rule]", " ", 
+     SqrtBox[
+      RowBox[{"k", " ", 
+       RowBox[{"T", " ", "/", "m"}]}]]}]}], "//", "Simplify"}], " ", "//", 
+  "Framed"}]], "Input",
+ CellChangeTimes->{{3.701093758056108*^9, 3.701093758342667*^9}, {
+  3.701093972951233*^9, 3.701093989899343*^9}, {3.701094022625278*^9, 
+  3.7010940513755817`*^9}, {3.701094133875988*^9, 3.701094147592845*^9}, {
+  3.701094178148471*^9, 3.701094255674864*^9}, {3.701094523811413*^9, 
+  3.701094525311769*^9}, {3.701095404058518*^9, 3.701095412589451*^9}}],
+
+Cell[BoxData[
+ FrameBox["True",
+  StripOnInput->False]], "Output",
+ CellChangeTimes->{{3.701093758702674*^9, 3.701093792375494*^9}, {
+   3.701093925840336*^9, 3.701093933661368*^9}, {3.701093968002199*^9, 
+   3.701093990692306*^9}, {3.701094027341145*^9, 3.7010940526977863`*^9}, {
+   3.701094134538706*^9, 3.701094147825677*^9}, {3.701094181843082*^9, 
+   3.701094205185758*^9}, {3.701094237929534*^9, 3.701094260209598*^9}, 
+   3.701094530466044*^9, 3.701095416191601*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell["\<\
+Since this expression evaluates to True, the Fokker-Planck equation is indeed \
+satisfied.\
+\>", "Subsubsection",
+ CellChangeTimes->{{3.7010945327289143`*^9, 3.701094565452344*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Part b.", "Section",
+ CellChangeTimes->{{3.7010948582038937`*^9, 3.701094859738657*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["The non-thermal energy density is given as", "Subsubsection",
+ CellChangeTimes->{{3.701095298698406*^9, 3.7010953077504807`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"\[CurlyEpsilon]nt", " ", "=", " ", 
+   RowBox[{
+    FractionBox["1", "2"], "me", " ", 
+    RowBox[{
+     SubsuperscriptBox["\[Integral]", "0", "\[Infinity]"], 
+     RowBox[{
+      SuperscriptBox["v", "2"], 
+      RowBox[{"f", "[", 
+       RowBox[{"v", ",", "t"}], "]"}], " ", 
+      RowBox[{"\[DifferentialD]", "v"}]}]}]}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.70109531389502*^9, 3.701095379429447*^9}, {
+  3.701095424809496*^9, 3.7010954507307673`*^9}, {3.701095494177187*^9, 
+  3.701095554532688*^9}}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1920, 1026},
+WindowMargins->{{2476, 1364}, {-84, 111}},
+FrontEndVersion->"11.0 for Linux x86 (64-bit) (September 21, 2016)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 149, 5, 156, "Chapter"],
+Cell[CellGroupData[{
+Cell[754, 31, 92, 1, 65, "Section"],
+Cell[CellGroupData[{
+Cell[871, 36, 120, 1, 35, "Subsubsection"],
+Cell[994, 39, 139, 2, 32, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1170, 46, 162, 3, 35, "Subsubsection"],
+Cell[1335, 51, 1425, 40, 64, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2797, 96, 163, 3, 35, "Subsubsection"],
+Cell[2963, 101, 719, 21, 62, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3719, 127, 469, 14, 37, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[4213, 145, 1044, 26, 44, "Input"],
+Cell[5260, 173, 474, 8, 44, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[5761, 185, 191, 4, 35, "Subsubsection"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5989, 194, 94, 1, 65, "Section"],
+Cell[CellGroupData[{
+Cell[6108, 199, 135, 1, 35, "Subsubsection"],
+Cell[6246, 202, 542, 14, 53, "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
