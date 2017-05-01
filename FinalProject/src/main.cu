@@ -10,443 +10,206 @@
 
 #include <trid.h>
 
-////////////////////////////////////////////////////////////////////
-//                                                                //
-// explicit Black-Scholes finite difference kernels               //
-//                                                                //
-////////////////////////////////////////////////////////////////////
+/* fundamental physical constants */
+const double k_b = 1.385e-16; // boltzmann constant (erg/K)
+const double mbar = 0.593 * 1.6726218e-24; // m-bar (mean mass per particle = 0.593 m_p) (g)
+const double c_v = 3 * k_b / (2 * mbar);	// specific heat
+const double kappa_0 = 1e-6;// Thermal conductivity constant (erg cm^-1 s^-1 K^(-7/2))
+const double Pr = 0.012;		// Prandtl number in fully ionized plasma
+const double mu_0 = Pr * kappa_0 / c_v;		// Dynamic viscosity constant
 
-template <typename REAL>
-__global__ void BS_explicit1_old(int N, REAL c1, REAL c2, REAL c3,
-                             REAL dS, REAL K, REAL *u_d) {
+/* Adjustable physical parameters */
+const double L = 53e8;							// Length of half flux tube (cm)
+const double T = 1e-3;							// Length of the simulation (s)
+const double p_init = 1.0;						// Initial pressure (erg cm^-3)
+const double T_init = 2e4;					// Initial temperture of the plasma
+const double rho_init = mbar * p_init / (k_b * T_init);	// Initial density of the plasma
+const double u_init = 0.0;				// Initial speed of the plasma
+const double F = 3.5e10;				// Flare energy flux (erg cm^-2 s^-1)
+const double Delta_fl = L;					// extent of heat flux function
+const float h = 2 * F / Delta_fl;		// heating function
 
-  __shared__ REAL u[258];
-  REAL  S, lambda, gamma, a, b, c, utmp;
+/* Adjustable simulation parameters */
+const uint N_s = 16;		// Number of spatial points
+const uint N_t = 5;		// Number of temporal points
+const float ds = L / N_s;	// distance between spatial points
+const float dt = T / N_t;	// distance between temporal points
+const uint N_loops = 1;		// Number of parallel loops to simulate
 
-  S      = threadIdx.x * dS;
-  lambda = c1*S*S;
-  gamma  = c2*S;
+/* velocity update constants */
+/* c2 = k/m */
+/* c3 = (4/3)*mu_0*/
+const float u_c2 = k_b / mbar;
+const float u_c3 = 4 * mu_0 / 3;
 
-  if (threadIdx.x==blockDim.x-1) {
-    a = - 2.0f*gamma;
-    b = + 2.0f*gamma - c3;
-    c =   0.0f;
-  }
-  else {
-    a =        lambda - gamma;
-    b = - 2.0f*lambda - c3;
-    c =        lambda + gamma;
-  }
+/* Temperture update constants */
+/* c2 = 1 / c_v 				*/
+/* c3 = 4 mu_0 / (3 c_v) 		*/
+/* c4 = K_0 / c_v				*/
+/* c5 = h 						*/
+const float T_c2 = 1 / c_v;
+const float T_c3 = 4 * mu_0 / (3 * c_v);
+const float T_c4 = kappa_0 / c_v;
 
-  int i = threadIdx.x + 1;
-
-  u[i] = 0.0f;
-  if (S>K) u[i] = S-K;
-
-  if (threadIdx.x==0) {
-    u[0]            = 0.0f; // need to be zeroed out
-    u[blockDim.x+1] = 0.0f; //
-  }
-  __syncthreads();
-
-// main time-marching loop
-
-  utmp = u[i];
-
-  for (int n=0; n<N; n++) {
-    utmp = utmp + a*u[i-1] + b*utmp + c*u[i+1];
-    __syncthreads();
-    u[i] = utmp;
-    __syncthreads();
-  }
-
-// output to ensure compiler does force execution
-
-  if (threadIdx.x==0)
-    u_d[blockIdx.x] = 0.5f*(u[blockDim.x/2]
-                           +u[blockDim.x/2+1]);
+/* Finite Difference Derivative */
+/* dx/ds */
+template<typename REAL> __device__ REAL D(REAL x0, REAL x1, REAL ds) {
+	return (x1 - x0) / ds;
 }
 
+/* Branchless upwind differencing scheme */
+template<typename REAL> __device__ REAL uD(REAL u, REAL x9, REAL x0, REAL x1,
+		REAL ds) {
 
+	REAL t1 = x0 * abs(u) / ds;
+	REAL t2 = -(x9 + x1) * abs(u) / (2 * ds);
+	REAL t3 = (x9 - x1) * u / (2 * ds);
 
-template <typename REAL>
-__global__ void BS_explicit1(int N, REAL c1, REAL c2, REAL c3,
-                             REAL dS, REAL K, REAL *u_d) {
-
-  __shared__ REAL u[258], u2[258];
-  REAL  S, lambda, gamma, a, b, c, utmp;
-
-  S      = threadIdx.x * dS;
-  lambda = c1*S*S;
-  gamma  = c2*S;
-
-  if (threadIdx.x==blockDim.x-1) {
-    a = - 2.0f*gamma;
-    b = + 2.0f*gamma - c3;
-    c =   0.0f;
-  }
-  else {
-    a =        lambda - gamma;
-    b = - 2.0f*lambda - c3;
-    c =        lambda + gamma;
-  }
-
-  int i = threadIdx.x + 1;
-
-  u[i] = 0.0f;
-  if (S>K) u[i] = S-K;
-
-  if (threadIdx.x==0) {
-    u[0]            = 0.0f; // need to be zeroed out
-    u[blockDim.x+1] = 0.0f; //
-  }
-  __syncthreads();
-
-// main time-marching loop, double-buffered for performance
-
-  utmp = u[i];
-
-  for (int n=0; n<N; n+=2) {
-    utmp  = utmp + a*u[i-1] + b*utmp + c*u[i+1];
-    u2[i] = utmp;
-    __syncthreads();
-    utmp  = utmp + a*u2[i-1] + b*utmp + c*u2[i+1];
-    u[i]  = utmp;
-    __syncthreads();
-  }
-
-// output to ensure compiler does force execution
-
-  if (threadIdx.x==0)
-    u_d[blockIdx.x] = 0.5f*(u[blockDim.x/2]
-                           +u[blockDim.x/2+1]);
+	return t1 + t2 + t3;
 }
 
-
-template <typename REAL>
-__global__ void BS_explicit2_old(int N, REAL c1, REAL c2, REAL c3,
-                             REAL dS, REAL K, REAL *u_d) {
-
-// volatile keyword required because of "non-safe" use
-  volatile __shared__ REAL u_shared[33*8];
-
-  REAL a[8], b[8], c[8], u[8], S, lambda, gamma, um, up, u0;
-  int  t;
-
-// initialise lots of things
-
-  t = threadIdx.x%32;
-
-  for (int i=0; i<8; i++) {
-    S      = (8*t+i) * dS;
-    lambda = c1*S*S;
-    gamma  = c2*S;
-
-    if (i==7 && t==31) {
-      a[i] = - 2.0f*gamma;
-      b[i] = + 2.0f*gamma - c3;
-      c[i] = 0.0;
-    }
-    else {
-      a[i] =        lambda - gamma;
-      b[i] = - 2.0f*lambda - c3;
-      c[i] =        lambda + gamma;
-    }
-
-    u[i] = 0.0f;
-    if (S>K) u[i] = S-K;
-  }
-
-// offset so that each warp has its own piece of shared memory
-
-  t = t + 33 * (threadIdx.x/32);
-  u_shared[t] = 0.0f;  // necessary to ensure not NaN
-
-// main time-marching loop
-
-  for (int n=0; n<N; n++) {
-    if (sizeof(REAL) == 4) {
-      um = __shfl_up((float)u[7], 1);
-      up = __shfl_down((float)u[0], 1);
-    }
-    else {
-      u_shared[t+1] = u[7];
-      um            = u_shared[t];
-      u_shared[t]   = u[0];
-      up            = u_shared[t+1];
-    }
-
-    for (int i=0; i<7; i++) {
-      u0   = u[i];
-      u[i] = u[i] + a[i]*um + b[i]*u0 + c[i]*u[i+1];
-      um   = u0;
-    }
-
-    u[7] = u[7] + a[7]*um + b[7]*u[7] + c[7]*up;
-  }
-
-// output to ensure compiler does force execution
-
-  u_shared[t] = u[0];
-
-  if (threadIdx.x%32 == 15)
-    u_d[(threadIdx.x+blockIdx.x*blockDim.x)/32] =
-                        0.5f*(u[7]+u_shared[t+1]);
+template<typename REAL> __device__ REAL ave(REAL x0, REAL x1) {
+	return (x0 + x1) / 2;
 }
 
+/* d rho / dt  = - d/ds(rho u) 					*/
+/* 			   = -rho du/ds - u (d rho / ds)	*/
+template<typename REAL> __device__ REAL density_update(REAL rho_9, REAL rho_0,
+		REAL rho_1, REAL u_9, REAL u_0, REAL ds, REAL dt) {
 
+	/* -rho du/ds */
+	REAL t1 = -rho_0 * D(u_9, u_0, ds);
 
-template <typename REAL>
-__global__ void BS_explicit2(int N, REAL c1, REAL c2, REAL c3,
-                             REAL dS, REAL K, REAL *u_d) {
+	/*  - u (d rho / ds) */
+	REAL t2 = -uD(ave(u_9, u_0), rho_9, rho_0, rho_1, ds);
 
-// volatile keyword required because of "non-safe" use
-  volatile __shared__ REAL u_shared[33*8];
+	return rho_0 + dt * (t1 + t2);
 
-  REAL a[8], b[8], c[8], u[8], u2[8], S, lambda, gamma, um, up;
-  int  t;
-
-// initialise lots of things
-
-  t = threadIdx.x%32;
-
-  for (int i=0; i<8; i++) {
-    S      = (8*t+i) * dS;
-    lambda = c1*S*S;
-    gamma  = c2*S;
-
-    if (i==7 && t==31) {
-      a[i] = - 2.0f*gamma;
-      b[i] = + 2.0f*gamma - c3;
-      c[i] = 0.0;
-    }
-    else {
-      a[i] =        lambda - gamma;
-      b[i] = - 2.0f*lambda - c3;
-      c[i] =        lambda + gamma;
-    }
-
-    u[i] = 0.0f;
-    if (S>K) u[i] = S-K;
-  }
-
-// offset so that each warp has its own piece of shared memory
-
-  t = t + 33 * (threadIdx.x/32);
-  u_shared[t] = 0.0f;  // necessary to ensure not NaN
-
-// main time-marching loop, double-buffered for performance
-
-  for (int n=0; n<N; n+=2) {
-
-    // first pass: u -> u2
-
-    if (sizeof(REAL) == 4) {
-      um = __shfl_up((float)u[7], 1);
-      up = __shfl_down((float)u[0], 1);
-    }
-    else {
-      u_shared[t+1] = u[7];
-      um            = u_shared[t];
-      u_shared[t]   = u[0];
-      up            = u_shared[t+1];
-    }
-
-    for (int i=1; i<4; i++)
-      u2[i] = u[i] + a[i]*u[i-1] + b[i]*u[i] + c[i]*u[i+1];
-    u2[0] = u[0] + a[0]*um + b[0]*u[0] + c[0]*u[1];
-    u2[7] = u[7] + a[7]*u[6] + b[7]*u[7] + c[7]*up;
-    for (int i=4; i<7; i++)
-      u2[i] = u[i] + a[i]*u[i-1] + b[i]*u[i] + c[i]*u[i+1];
-
-    // second pass: u2 -> u
-
-    if (sizeof(REAL) == 4) {
-      um = __shfl_up((float)u2[7], 1);
-      up = __shfl_down((float)u2[0], 1);
-    }
-    else {
-      u_shared[t+1] = u2[7];
-      um            = u_shared[t];
-      u_shared[t]   = u2[0];
-      up            = u_shared[t+1];
-    }
-
-    for (int i=1; i<4; i++)
-      u[i] = u2[i] + a[i]*u2[i-1] + b[i]*u2[i] + c[i]*u2[i+1];
-    u[0] = u2[0] + a[0]*um + b[0]*u2[0] + c[0]*u2[1];
-    u[7] = u2[7] + a[7]*u2[6] + b[7]*u2[7] + c[7]*up;
-    for (int i=4; i<7; i++)
-      u[i] = u2[i] + a[i]*u2[i-1] + b[i]*u2[i] + c[i]*u2[i+1];
-  }
-
-// output to ensure compiler does force execution
-
-  u_shared[t] = u[0];
-
-  if (threadIdx.x%32 == 15)
-    u_d[(threadIdx.x+blockIdx.x*blockDim.x)/32] =
-                        0.5f*(u[7]+u_shared[t+1]);
 }
 
+/* du/dt = -u du/ds - (1/rho) dp/ds + (1/rho) d/ds((4/3) mu du/ds) */
+/* c2 = k/m */
+/* c3 = (4/3)*mu_0*/
+template<typename REAL> __device__ REAL velocity_update(REAL rho_0, REAL rho_1,
+		REAL u_9, REAL u_0, REAL u_1, REAL T_9, REAL T_0, REAL T_1, REAL ds,
+		REAL dt) {
 
-////////////////////////////////////////////////////////////////////
-//                                                                //
-// implicit Black-Scholes finite difference kernels               //
-//                                                                //
-////////////////////////////////////////////////////////////////////
+	/*-u du/ds*/
+	REAL t1 = -uD(u_0, u_9, u_0, u_1, ds);
 
-template <typename REAL>
-__launch_bounds__(256, 2) // use "only" 128 registers per thread
-__global__ void BS_implicit1(int N, REAL c1, REAL c2, REAL c3,
-                             REAL c4, REAL dS, REAL K, REAL *u_d) {
+	/* -(1/rho) dp/ds */
+	REAL p_0 = rho_0 * T_0;
+	REAL p_1 = rho_1 * T_1;
+	REAL t2 = -u_c2 * D(p_0, p_1, ds) / ave(rho_0, rho_1);
 
-  REAL a[8], b[8], c[8], u[8], S, lambda, gamma;
-  int  t = threadIdx.x%32;
+	/* (1/rho) d/ds((4/3) mu du/ds) */
+	REAL mudu_0 = T_0 * T_0 * sqrt(T_0) * D(u_9, u_0, ds);
+	REAL mudu_1 = T_1 * T_1 * sqrt(T_1) * D(u_0, u_1, ds);
+	REAL t3 = u_c3 * D(mudu_0, mudu_1, ds) / ave(rho_0, rho_1);
 
-// initialise payoff
+	return u_0 + dt * (t1 + t2 + t3);
 
-  for (int i=0; i<8; i++) {
-    S    = (8*t+i) * dS;
-    u[i] = 0.0f;
-    if (S>K) u[i] = S-K;
-  }
-
-// main time-marching loop
-
-  for (int n=0; n<N; n++) {
-    for (int i=0; i<8; i++) {
-      S      = (8*t+i) * dS;
-      lambda = c1*S*S;
-      gamma  = c2*S;
-
-      a[i] =              - ( lambda - gamma );
-      b[i] = 1.0f + c3 + 2.0f*lambda + c4*n;
-      c[i] =              - ( lambda + gamma );
-    }
-
-    if (t==31) {
-      a[7] =           + 2.0f*gamma;
-      b[7] = 1.0f + c3 - 2.0f*gamma;
-      c[7] = 0.0f;
-    }
-
-    trid_warp<8>(a,b,c,u);
-  }
-
-// output to ensure compiler does force execution
-
-  u[0] = __shfl_down(u[0],1);
-
-  if (t == 15)
-    u_d[(threadIdx.x+blockIdx.x*blockDim.x)/32] = 0.5f*(u[7]+u[0]);
 }
 
+/* dT/dt = -u dT/ds - (1/c_v) (p/rho) du/ds + (4 mu_0 / (3 c_v)) (T^(5/2)/rho) (du/ds)^2 + (kappa_0/c_v)(1/rho) d/ds(T^5/2 dT/ds) + h / rho */
+/* c2 = 1 / c_v 				*/
+/* c3 = 4 mu_0 / (3 c_v) 		*/
+/* c4 = K_0 / c_v				*/
+template<typename REAL> __device__ REAL energy_update(REAL rho_9, REAL rho_0,
+		REAL rho_1, REAL u_9, REAL u_0, REAL u_1, REAL T_9, REAL T_0, REAL T_1,
+		REAL h_0, REAL ds, REAL dt) {
 
-template <typename REAL>
-__launch_bounds__(256, 2) // use "only" 128 registers per thread
-__global__ void BS_implicit2(int N, REAL c1, REAL c2, REAL c3,
-                             REAL c4, REAL dS, REAL K, REAL *u_d) {
+	/* -u dT/ds */
+	REAL t1 = -uD(ave(u_9, u_0), T_9, T_0, T_1, ds);
 
-  REAL a[8], b[8], c[8], d[8], u[8], S, lambda, gamma;
-  int  t = threadIdx.x%32;
+	/* - (1/c_v) (p/rho) du/ds */
+	REAL p_0 = rho_0 * T_0;
+	REAL duds = D(u_9, u_0, ds);
+	REAL t2 = -T_c2 * (p_0 / rho_0) * duds;
 
-// initialise payoff
+	/* (4 mu_0 / (3 c_v)) (T^(5/2)/rho) (du/ds)^2 */
+	REAL T52_0 = T_0 * T_0 * sqrt(T_0);
+	REAL t3 = T_c3 * (T52_0 / rho_0) * duds * duds;
 
-  for (int i=0; i<8; i++) {
-    S    = (8*t+i) * dS;
-    u[i] = 0.0f;
-    if (S>K) u[i] = S-K;
-  }
+	/* (kappa_0/c_v)(1/rho) d/ds(T^5/2 dT/ds) */
+	REAL T52_1 = T_1 * T_1 * sqrt(T_1);
+	REAL T52_9 = T_9 * T_9 * sqrt(T_9);
+	REAL KdT_0 = ave(T52_9, T52_0) * D(T_9, T_0, ds);
+	REAL KdT_1 = ave(T52_0, T52_1) * D(T_0, T_1, ds);
+	REAL t4 = T_c4 * D(KdT_0, KdT_1, ds);
 
-// main time-marching loop
+	/* h / rho  */
+	REAL t5 = h_0 / rho_0;
 
-  for (int n=0; n<N; n++) {
-    for (int i=0; i<8; i++) {
-      S      = (8*t+i) * dS;
-      lambda = c1*S*S;
-      gamma  = c2*S;
-
-      a[i] =       - ( lambda - gamma );
-      b[i] = c3 + 2.0f*lambda + c4*n;
-      c[i] =       - ( lambda + gamma );
-
-      if (i==0)
-        d[0] = - a[0]*__shfl_up(u[7],1) - b[0]*u[0] - c[0]*u[1];
-      else if (i<7)
-        d[i] = - a[i]*u[i-1] - b[i]*u[i] - c[i]*u[i+1];
-    }
-
-    if (t==31) {
-      a[7] =    + 2.0f*gamma;
-      b[7] = c3 - 2.0f*gamma;
-      c[7] = 0.0f;
-    }
-    d[7]  = - a[7]*u[6] - b[7]*u[7] - c[7]*__shfl_down(u[0],1);
-
-    for (int i=0; i<8; i++) b[i] += 1.0f;
-
-    trid_warp<8>(a,b,c,d);
-
-    for (int i=0; i<8; i++) u[i] += d[i];
-  }
-
-// output to ensure compiler does force execution
-
-  u[0] = __shfl_down(u[0],1);
-
-  if (t == 15)
-    u_d[(threadIdx.x+blockIdx.x*blockDim.x)/32] = 0.5f*(u[7]+u[0]);
+	return T_0 + dt * (t1 + t2 + t3 + t4 + t5);
 }
 
+template<typename REAL>
+__global__ void hydro_explicit(REAL * rho, REAL * u, REAL * T, size_t pitch) {
 
-template <typename REAL>
-__launch_bounds__(256, 2) // use "only" 128 registers per thread
-__global__ void BS_implicit3(int N, REAL c1, REAL c2, REAL c3,
-                             REAL dS, REAL K, REAL *u_d) {
+	uint j = threadIdx.x;	// Each thread solves for its own spatial index
 
-  REAL a[8], b[8], c[8], u[8], a2[8], ap[5], bp[5], cp[5],
-       S, lambda, gamma, bbi,bb0,a0,c0;
-  int  t = threadIdx.x%32;
+	__syncthreads();
 
-// initialise lots of things
+	/* Main time-marching loop */
+	for (int i = 0; i < N_t - 1; i++) {
 
-#pragma unroll 1
-  for (int i=0; i<8; i++) {
-    S      = (8*t+i) * dS;
-    lambda = c1*S*S;
-    gamma  = c2*S;
+		/* Branch to deal with boundary conditions */
+		if (j == 0) {		// Left-hand boundary
 
-    a[i] =              - ( lambda - gamma );
-    b[i] = 1.0f + c3 + 2.0f*lambda;
-    c[i] =              - ( lambda + gamma );
+			__syncthreads();
 
-    u[i] = 0.0f;
-    if (S>K) u[i] = S-K;
-  }
+			printf("+++++++++++++++++++++++++++++++\n");
 
-  if (t==31) {
-    a[7] =           + 2.0f*gamma;
-    b[7] = 1.0f + c3 - 2.0f*gamma;
-    c[7] = 0.0f;
-  }
+			/*Neumann BCs in density and temperature*/
+			rho[(i + 1) * pitch + j] = rho[(i + 1) * pitch + (j + 1)];
+			T[(i + 1) * pitch + j] = T[(i + 1) * pitch + (j + 1)];
 
-  trid_warp_setup<8>(a,b,c,a2,ap,bp,cp, bbi,bb0,a0,c0);
+		} else if (j == N_s - 1) {	// Right-hand boundary
 
-// main time-marching loop
+			__syncthreads();
 
-  for (int n=0; n<N; n++) {
-    trid_warp_solve<8>(a,b,c,a2,ap,bp,cp,u, bbi,bb0,a0,c0);
-  }
+			/* Neumann BCs in density and temperature */
+			rho[(i + 1) * pitch + j] = rho[(i + 1) * pitch + (j - 1)];
+			T[(i + 1) * pitch + j] = T[(i + 1) * pitch + (j - 1)];
 
-// output to ensure compiler does force execution
+		} else {	// No boundary
 
-  u[0] = __shfl_down(u[0],1);
+			/* Access density elements */
+			REAL rho_9 = rho[i * pitch + j - 1];
+			REAL rho_0 = rho[i * pitch + j];
+			REAL rho_1 = rho[i * pitch + j + 1];
 
-  if (threadIdx.x%32 == 15)
-    u_d[(threadIdx.x+blockIdx.x*blockDim.x)/32] = 0.5f*(u[7]+u[0]);
+			/* Access velocity elements */
+			REAL u_9 = u[i * pitch + j - 1];
+			REAL u_0 = u[i * pitch + j];
+			REAL u_1 = u[i * pitch + j + 1];
+
+			/* Access temperture elements */
+			REAL T_9 = T[i * pitch + j - 1];
+			REAL T_0 = T[i * pitch + j];
+			REAL T_1 = T[i * pitch + j + 1];
+
+			printf("%d %d %e %e %e\n", i, j, rho_0, u_0, T_0);
+
+			/* Update values */
+			rho[(i + 1) * pitch + j] = density_update(rho_9, rho_0, rho_1, u_9,
+					u_0, ds, dt);
+			u[(i + 1) * pitch + j] = velocity_update(rho_0, rho_1, u_9, u_0,
+					u_1, T_9, T_0, T_1, ds, dt);
+			T[(i + 1) * pitch + j] = energy_update(rho_9, rho_0, rho_1, u_9,
+					u_0, u_1, T_9, T_0, T_1, h, ds, dt);
+
+			__syncthreads();
+
+		}
+
+		__syncthreads();
+
+	}
+	//printf("%d\n", j);
+
 }
-
 
 ////////////////////////////////////////////////////////////////////
 //                                                                //
@@ -455,148 +218,98 @@ __global__ void BS_implicit3(int N, REAL c1, REAL c2, REAL c3,
 ////////////////////////////////////////////////////////////////////
 
 int main(int argc, char **argv) {
-  int    N, noptions, nthreads, nblocks;
-  float  *u_h, *u_d, finsts, flops;
-  double *U_h, *U_d, val;
 
-  // initialise CUDA timing
+	/* Initialize CUDA timing */
+	float milli;
+	cudaEvent_t start, stop;
+	cudaEventCreate(&start);
+	cudaEventCreate(&stop);
 
-  float milli;
-  cudaEvent_t start, stop;
-  cudaEventCreate(&start);
-  cudaEventCreate(&stop);
+	/* Configure shared memory configuration*/
+	cudaDeviceSetSharedMemConfig (cudaSharedMemBankSizeFourByte);
 
-  // set number of options to be calculated
+	/* allocate memory for density field */
+	size_t rho_pitch_d;
+	float *rho_h, *rho_d;
+	rho_h = (float *) malloc(N_s * N_t * sizeof(float));	// Host memory
+	uint ret = cudaMallocPitch(&rho_d, &rho_pitch_d, N_s * sizeof(float), N_t); // Device memory
 
-  noptions = 1;
+	/* allocate memory for velocity field */
+	size_t u_pitch_d;
+	float *u_h, *u_d;
+	u_h = (float *) malloc(N_s * N_t * sizeof(float));	// Host memory
+	ret = cudaMallocPitch(&u_d, &u_pitch_d, N_s * sizeof(float), N_t); // Device memory
 
-  // allocate memory for answers
+	/* allocate memory for temperature field */
+	size_t T_pitch_d;
+	float *T_h, *T_d;
+	T_h = (float *) malloc(N_s * N_t * sizeof(float));	// Host memory
+	ret = cudaMallocPitch(&T_d, &T_pitch_d, N_s * sizeof(float), N_t); // Device memory
 
-  u_h = (float *)malloc(noptions*sizeof(float));
-  U_h = (double *)malloc(noptions*sizeof(double));
-  cudaMalloc((void **)&u_d, noptions*sizeof(float));
-  cudaMalloc((void **)&U_d, noptions*sizeof(double));
+	/* Set the pitch of the host  and device memory */
+	size_t pitch_h = N_s * sizeof(float);
+	size_t pitch_d = u_pitch_d;
 
-  // execute kernels
+	/* Set up the initial conditions */
+	for (uint i = 0; i < 1; i++) {
+		for (uint j = 0; j < N_s; j++) {
 
-  for (int prec=0; prec<2; prec++) {
-    if (prec==0) {
-      printf("\nsingle precision performance tests \n");
-      cudaDeviceSetSharedMemConfig(cudaSharedMemBankSizeFourByte);
-    }
-    else {
-      printf("\ndouble precision performance tests \n");
-      cudaDeviceSetSharedMemConfig(cudaSharedMemBankSizeEightByte);
-    }
-    printf("---------------------------------- \n");
-    printf(" method    exec time   GFinsts    GFlops       value at strike \n");
+			rho_h[i * N_s + j] = rho_init;	// Initial density
+			u_h[i * N_s + j] = u_init;		// Initial velocity
+			T_h[i * N_s + j] = T_init;		// Initial temperture
+		}
+	}
 
-    for (int pass=0; pass<5; pass++) {
-      if (pass==0)
-        cudaDeviceSetCacheConfig(cudaFuncCachePreferShared);
-      else
-        cudaDeviceSetCacheConfig(cudaFuncCachePreferL1);
+	/* Copy initial conditions to the device */
+	cudaMemcpy2D(rho_d, pitch_d, rho_h, pitch_h, N_s * sizeof(float), 1,
+			cudaMemcpyHostToDevice);
+	cudaMemcpy2D(u_d, pitch_d, u_h, pitch_h, N_s * sizeof(float), 1,
+			cudaMemcpyHostToDevice);
+	cudaMemcpy2D(T_d, pitch_d, T_h, pitch_h, N_s * sizeof(float), 1,
+			cudaMemcpyHostToDevice);
 
-      cudaEventRecord(start);
+	cudaEventRecord(start);
 
-      if (pass<2)
-        N = 50000; // number of timesteps for explicit solvers
-      else if (pass>=2)
-        N = 2500;  // number of timesteps for implicit solvers
+	uint nthreads = N_s;
+	uint nblocks = N_loops;
 
-  // set parameters for BS simulation
+	hydro_explicit<<<nblocks,nthreads>>>(rho_d, u_d, T_d, pitch_d);
 
-      double Smax=200.0, K=100.0, r=0.05, sigma=0.2, T=1.0;
+	cudaEventRecord(stop);
+	cudaEventSynchronize(stop);
+	cudaEventElapsedTime(&milli, start, stop);
 
-      double dS = Smax / 255.0;
-      double dt = T / ( (double) N);
-      double C1 = 0.5*dt*sigma*sigma / (dS*dS);
-      double C2 = 0.5*dt*r / dS;
-      double C3 = r*dt;
+	/* Copy initial conditions to the device */
+	cudaMemcpy2D(rho_h, pitch_h, rho_d, pitch_d, N_s * sizeof(float), N_t,
+			cudaMemcpyDeviceToHost);
+	cudaMemcpy2D(u_h, pitch_h, u_d, pitch_d, N_s * sizeof(float), N_t,
+			cudaMemcpyDeviceToHost);
+	cudaMemcpy2D(T_h, pitch_h, T_d, pitch_d, N_s * sizeof(float), N_t,
+			cudaMemcpyDeviceToHost);
 
-      float c1=C1, c2=C2, c3=C3, ds=dS, k=K;
-
-      if (pass==0) {
-        nthreads = 256;
-        nblocks  = noptions;
-      }
-      else {
-        nthreads = 128;
-        nblocks  = noptions / (nthreads/32);
-      }
-
-      if (pass==0 && prec==0)
-        BS_explicit1<<<nblocks,nthreads>>>(N,c1,c2,c3,ds,k, u_d);
-      else if (pass==0 && prec==1)
-        BS_explicit1<<<nblocks,nthreads>>>(N,C1,C2,C3,dS,K, U_d);
-      else if (pass==1 && prec==0)
-        BS_explicit2<<<nblocks,nthreads>>>(N,c1,c2,c3,ds,k, u_d);
-      else if (pass==1 && prec==1)
-        BS_explicit2<<<nblocks,nthreads>>>(N,C1,C2,C3,dS,K, U_d);
-      else if (pass==2 && prec==0)
-        BS_implicit1<<<nblocks,nthreads>>>(N,c1,c2,c3,0.0f,ds,k, u_d);
-      else if (pass==2 && prec==1)
-        BS_implicit1<<<nblocks,nthreads>>>(N,C1,C2,C3,0.0, dS,K, U_d);
-      else if (pass==3 && prec==0)
-        BS_implicit2<<<nblocks,nthreads>>>(N,c1,c2,c3,0.0f,ds,k, u_d);
-      else if (pass==3 && prec==1)
-        BS_implicit2<<<nblocks,nthreads>>>(N,C1,C2,C3,0.0, dS,K, U_d);
-      else if (pass==4 && prec==0)
-        BS_implicit3<<<nblocks,nthreads>>>(N,c1,c2,c3,ds,k, u_d);
-      else if (pass==4 && prec==1)
-        BS_implicit3<<<nblocks,nthreads>>>(N,C1,C2,C3,dS,K, U_d);
-
-      cudaEventRecord(stop);
-      cudaEventSynchronize(stop);
-      cudaEventElapsedTime(&milli, start, stop);
-
-      if (prec==0) {
-        cudaMemcpy(u_h,u_d,noptions*sizeof(float),
-                   cudaMemcpyDeviceToHost);
-        val = (double) u_h[noptions-1];
-        for (int n=0; n<noptions; n++) {
-          if (val != (double) u_h[n] )
-            printf(" n = %d, val1 = %f, val2 = %f \n",n,val,u_h[n]);
-        }
-      }
-      else {
-        cudaMemcpy(U_h,U_d,noptions*sizeof(double),
-                   cudaMemcpyDeviceToHost);
-        val = U_h[noptions-1];
-        for (int n=0; n<noptions; n++) {
-          if (val != U_h[n] )
-            printf(" n = %d, val1 = %f, val2 = %f \n",n,val,U_h[n]);
-        }
-      }
-
-      float factor = 256.0f*noptions*N / (1.0e6f*milli);
-
-      if (pass<2) {
-        printf("explicit%1d   %7.2f    %7.2f   %7.2f   %20.14f  \n",
-                pass+1,milli,3.0f*factor,6.0f*factor,val);
-      }
-      else if (pass>=2) {
-        if (pass==2) {
-          finsts = (150 + 46*prec) / 8.0f;
-          flops  = (220 + 91*prec) / 8.0f;
-        }
-        if (pass==3) {
-          finsts = (190 + 46*prec) / 8.0f;
-          flops  = (276 + 91*prec) / 8.0f;
-        }
-        if (pass==4) {
-          finsts =  53             / 8.0f;
-          flops  =  91             / 8.0f;
-        }
-        printf("implicit%1d   %7.2f    %7.2f   %7.2f   %20.14f  \n",
-                pass-1,milli,finsts*factor,flops*factor,val);
-      }
-    }
-  }
+	printf("%f\n", milli);
 
 // CUDA exit -- needed to flush printf write buffer
 
-  cudaThreadSynchronize();
-  cudaDeviceReset();
-  return 0;
+	cudaThreadSynchronize();
+	cudaDeviceReset();
+
+	FILE * meta_f = fopen("meta.dat", "wb");
+	FILE * rho_f = fopen("rho.dat", "wb");
+	FILE * u_f = fopen("u.dat", "wb");
+	FILE * T_f = fopen("T.dat", "wb");
+
+	fwrite(&N_s, sizeof(uint), 1, meta_f);
+	fwrite(&N_t, sizeof(uint), 1, meta_f);
+
+	fwrite(rho_h, sizeof(float), N_s * N_t, rho_f);
+	fwrite(u_h, sizeof(float), N_s * N_t, u_f);
+	fwrite(T_h, sizeof(float), N_s * N_t, T_f);
+
+	fclose(meta_f);
+	fclose(rho_f);
+	fclose(u_f);
+	fclose(T_f);
+
+	return 0;
 }
