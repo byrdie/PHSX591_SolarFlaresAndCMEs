@@ -18,10 +18,11 @@ const double mu_0 = Pr * kappa_0 / c_v; // Dynamic viscosity constant
 
 /* Adjustable physical parameters */
 const double L = 53e8; // Length of half flux tube      (cm)
+const double T = 4; // Length of simulation     (s)
 const double p_init = 1.0; // Initial pressure      (erg cm^-3)
 const double u_init = 0.0; // Initial speed of the plasma       (cm/s)
 const double T_init = 2e5; // Initial temperature of the plasma     (K)
-const double F = 3.5e-3; // Flare energy flux   (erg cm^-2 s^-1)
+const double F = 3.5e2; // Flare energy flux   (erg cm^-2 s^-1)
 const double Delta_fl = 10e8; // extent of flare heat flux function (cm)
 const float h = 2 * F / Delta_fl; // flare heating function
 
@@ -35,10 +36,12 @@ const double A = 0; // Coefficient of equilibrium heating function (erg??)
 
 /* Adjustable simulation parameters */
 const uint N_s = 512; // Number of spatial points
-const uint N_t = 6e4; // Number of temporal points
+const uint N_k = 1e3; // Number of temporal points to keep
 const float ds = L / N_s; // distance between spatial points
-const float dt = 1e-2; // distance between temporal points
+const float dt = 1e-6; // distance between temporal points
 const uint N_loops = 1; // Number of parallel loops to simulate
+const uint N_t = T / dt; // total number of temporal points
+const uint K = N_t / N_k; // Number of points to skip to keep the correct amount
 
 /* velocity update constants */
 /* c2 = k/m */
@@ -208,66 +211,72 @@ template<typename REAL> REAL energy_update(REAL rho_9, REAL rho_0,
 template<typename REAL> void hydro_explicit(REAL * h, REAL * rho, REAL * u, REAL * T, size_t pitch) {
 
     /* Main time-marching loop */
-    for (uint i = 0; i < N_t - 1; i++) {
+    for (uint k = 0; k < N_k - 1; k++) {
 
-        for (uint j = 1; j < N_s - 1; j++) {
+        /* Secondary time-marching loop */
+        for (uint l = 0; l < K; l++) {
 
-            /* Access density elements */
-            REAL rho_9 = rho[i * pitch + j - 1];
-            REAL rho_0 = rho[i * pitch + j];
-            REAL rho_1 = rho[i * pitch + j + 1];
-
-            /* Access velocity elements */
-            REAL u_9 = u[i * pitch + j - 1];
-            REAL u_0 = u[i * pitch + j];
-            REAL u_1 = u[i * pitch + j + 1];
-
-            /* Access temperture elements */
-            REAL T_9 = T[i * pitch + j - 1];
-            REAL T_0 = T[i * pitch + j];
-            REAL T_1 = T[i * pitch + j + 1];
-
-            if (j != N_s - 2) {
-                u[(i + 1) * pitch + j] = velocity_update(rho_0, rho_1, u_9, u_0, u_1, T_9, T_0, T_1, ds, dt);
+            if (l != 0) {
+                for (uint j = 0; j < N_s; j++) {
+                    rho[k * pitch + j] = rho[(k + 1) * pitch + j];
+                    u[k * pitch + j] = u[(k + 1) * pitch + j];
+                    T[k * pitch + j] = T[(k + 1) * pitch + j];
+                }
             }
 
+            /* loop over space */
+            for (uint j = 1; j < N_s - 1; j++) {
 
-            /* Update values */
-            rho[(i + 1) * pitch + j] = density_update(rho_9, rho_0, rho_1, u_9, u_0, ds, dt);
-            T[(i + 1) * pitch + j] = energy_update(rho_9, rho_0, rho_1, u_9, u_0, u_1, T_9, T_0, T_1, h[j], ds, dt);
+                /* Access density elements */
+                REAL rho_9 = rho[k * pitch + j - 1];
+                REAL rho_0 = rho[k * pitch + j];
+                REAL rho_1 = rho[k * pitch + j + 1];
 
+                /* Access velocity elements */
+                REAL u_9 = u[k * pitch + j - 1];
+                REAL u_0 = u[k * pitch + j];
+                REAL u_1 = u[k * pitch + j + 1];
+
+                /* Access temperture elements */
+                REAL T_9 = T[k * pitch + j - 1];
+                REAL T_0 = T[k * pitch + j];
+                REAL T_1 = T[k * pitch + j + 1];
+
+                if (j != N_s - 2) {
+                    u[(k + 1) * pitch + j] = velocity_update(rho_0, rho_1, u_9, u_0, u_1, T_9, T_0, T_1, ds, dt);
+                }
+
+
+                /* Update values */
+                rho[(k + 1) * pitch + j] = density_update(rho_9, rho_0, rho_1, u_9, u_0, ds, dt);
+                T[(k + 1) * pitch + j] = energy_update(rho_9, rho_0, rho_1, u_9, u_0, u_1, T_9, T_0, T_1, h[j], ds, dt);
+
+            }
+
+            /* LHS boundary condition */
+            uint j = 0;
+
+            /* Dirichlet BCs in density and temperature */
+            //        rho[(i + 1) * pitch + j] = ideal_gas(T_init);
+            //        T[(i + 1) * pitch + j] = T_init;
+
+            /* Neumann BCs in density and temperature */
+            rho[(k + 1) * pitch + j] = rho[(k + 1) * pitch + (j + 1)];
+            T[(k + 1) * pitch + j] = T[(k + 1) * pitch + (j + 1)];
+
+            /* RHS boundary condition */
+            j = N_s - 1;
+
+            /* Dirichlet BCs in density and temperature */
+            //        rho[(i + 1) * pitch + j] = ideal_gas(T_init);
+            //        T[(i + 1) * pitch + j] = T_init;
+
+            /* Neumann BCs in density and temperature */
+            rho[(k + 1) * pitch + j] = rho[(k + 1) * pitch + (j - 1)];
+            T[(k + 1) * pitch + j] = T[(k + 1) * pitch + (j - 1)];
         }
-
-        uint j = 0;
-
-//        rho[(i + 1) * pitch + j] = ideal_gas(T_init);
-//        T[(i + 1) * pitch + j] = T_init;
-
-
-                rho[(i + 1) * pitch + j] = rho[(i + 1) * pitch + (j + 1)];
-                T[(i + 1) * pitch + j] = T[(i + 1) * pitch + (j + 1)];
-
-        j = N_s - 1;
-
-//        rho[(i + 1) * pitch + j] = ideal_gas(T_init);
-//        T[(i + 1) * pitch + j] = T_init;
-
-        /* Neumann BCs in density and temperature */
-                rho[(i + 1) * pitch + j] = rho[(i + 1) * pitch + (j - 1)];
-                T[(i + 1) * pitch + j] = T[(i + 1) * pitch + (j - 1)];
     }
 
-
-
-    //    /* Main time-marching loop */
-    //    for (int i = 0; i < N_t - 1; i++) {
-    //        printf("+++++++++++++++++++++++++++++++\n");
-    //        for (int j = 0; j < N_s; j++) {
-    //
-    //            printf("%d %d %e %e %e\n", i, j, rho[i * pitch + j], u[i * pitch + j], T[i * pitch + j]);
-    //
-    //        }
-    //    }
 
 }
 
@@ -286,15 +295,15 @@ int main(int argc, char **argv) {
 
     /* allocate memory for density field */
     float *rho_h;
-    rho_h = (float *) malloc(N_s * N_t * sizeof (float)); // Host memory
+    rho_h = (float *) malloc(N_s * N_k * sizeof (float)); // Host memory
 
     /* allocate memory for velocity field */
     float *u_h;
-    u_h = (float *) malloc(N_s * N_t * sizeof (float)); // Host memory
+    u_h = (float *) malloc(N_s * N_k * sizeof (float)); // Host memory
 
     /* allocate memory for temperature field */
     float *T_h;
-    T_h = (float *) malloc(N_s * N_t * sizeof (float)); // Host memory
+    T_h = (float *) malloc(N_s * N_k * sizeof (float)); // Host memory
 
     /* allocate memory for heating function */
     float *h_h;
@@ -329,11 +338,11 @@ int main(int argc, char **argv) {
     FILE * T_f = fopen("T.dat", "wb");
 
     fwrite(&N_s, sizeof (uint), 1, meta_f);
-    fwrite(&N_t, sizeof (uint), 1, meta_f);
+    fwrite(&N_k, sizeof (uint), 1, meta_f);
 
-    fwrite(rho_h, sizeof (float), N_s * N_t, rho_f);
-    fwrite(u_h, sizeof (float), N_s * N_t, u_f);
-    fwrite(T_h, sizeof (float), N_s * N_t, T_f);
+    fwrite(rho_h, sizeof (float), N_s * N_k, rho_f);
+    fwrite(u_h, sizeof (float), N_s * N_k, u_f);
+    fwrite(T_h, sizeof (float), N_s * N_k, T_f);
 
     fclose(meta_f);
     fclose(rho_f);
