@@ -248,21 +248,27 @@ int main(int argc, char **argv) {
 
 	/* allocate memory for heating function */
 	float *h_h, *h_d;
-	T_h = (float *) malloc(N_s * sizeof(float));	// Host memory
-	ret = cudaMalloc(&T_d, N_s * sizeof(float), N_t); // Device memory
+	h_h = (float *) malloc(N_s * sizeof(float));	// Host memory
+	ret = cudaMalloc(&h_d, N_s * sizeof(float)); // Device memory
 
 	/* Set the pitch of the host  and device memory */
 	size_t pitch_h = N_s * sizeof(float);
 	size_t pitch_d = u_pitch_d;
 
 	/* Set up the initial conditions */
-	for (uint i = 0; i < 1; i++) {
-		for (uint j = 0; j < N_s; j++) {
+	for (uint j = 0; j < N_s; j++) {
 
-			rho_h[i * N_s + j] = rho_init;	// Initial density
-			u_h[i * N_s + j] = u_init;		// Initial velocity
-			T_h[i * N_s + j] = T_init;		// Initial temperture
+		rho_h[j] = rho_init;	// Initial density
+		u_h[j] = u_init;		// Initial velocity
+		T_h[j] = T_init;		// Initial temperture
+
+		/* Heating function initialization */
+		if (j == N_s - 1) {
+			h_h[j] = h;
+		} else {
+			h_h[j] = 0;
 		}
+
 	}
 
 	/* Copy initial conditions to the device */
@@ -272,6 +278,7 @@ int main(int argc, char **argv) {
 			cudaMemcpyHostToDevice);
 	cudaMemcpy2D(T_d, pitch_d, T_h, pitch_h, N_s * sizeof(float), 1,
 			cudaMemcpyHostToDevice);
+	cudaMemcpy(h_d, h_h, N_s * sizeof(float), cudaMemcpyHostToDevice);
 
 	cudaEventRecord(start);
 

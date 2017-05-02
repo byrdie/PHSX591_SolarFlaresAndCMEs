@@ -17,12 +17,12 @@ const double Pr = 1e-4; // Prandtl number in fully ionized plasma
 const double mu_0 = Pr * kappa_0 / c_v; // Dynamic viscosity constant
 
 /* Adjustable physical parameters */
-const double L = 53e8; // Length of half flux tube      (cm)
+const double L = 53e8; // Length of flux tube      (cm)
 const double T = 4; // Length of simulation     (s)
 const double p_init = 1.0; // Initial pressure      (erg cm^-3)
 const double u_init = 0.0; // Initial speed of the plasma       (cm/s)
-const double T_init = 2e5; // Initial temperature of the plasma     (K)
-const double F = 3.5e2; // Flare energy flux   (erg cm^-2 s^-1)
+const double T_init = 2e4; // Initial temperature of the plasma     (K)
+const double F = 3.5e1; // Flare energy flux   (erg cm^-2 s^-1)
 const double Delta_fl = 10e8; // extent of flare heat flux function (cm)
 const float h = 2 * F / Delta_fl; // flare heating function
 
