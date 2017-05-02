@@ -246,6 +246,11 @@ int main(int argc, char **argv) {
 	T_h = (float *) malloc(N_s * N_t * sizeof(float));	// Host memory
 	ret = cudaMallocPitch(&T_d, &T_pitch_d, N_s * sizeof(float), N_t); // Device memory
 
+	/* allocate memory for heating function */
+	float *h_h, *h_d;
+	T_h = (float *) malloc(N_s * sizeof(float));	// Host memory
+	ret = cudaMalloc(&T_d, N_s * sizeof(float), N_t); // Device memory
+
 	/* Set the pitch of the host  and device memory */
 	size_t pitch_h = N_s * sizeof(float);
 	size_t pitch_d = u_pitch_d;
