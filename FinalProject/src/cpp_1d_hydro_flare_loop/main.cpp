@@ -9,7 +9,7 @@
 #include <cmath>
 
 /* fundamental physical constants */
-const double k_b = 1.385e-16; // boltzmann constant (erg/K)
+const double k_b = 1.38065e-16; // boltzmann constant (erg/K)
 const double mbar = 0.593 * 1.6726218e-24; // m-bar (mean mass per particle = 0.593 m_p) (g)
 const double c_v = 3 * k_b / (2 * mbar); // specific heat
 const double kappa_0 = 1e-6; // Thermal conductivity constant (erg cm^-1 s^-1 K^(-7/2))
@@ -18,13 +18,13 @@ const double mu_0 = Pr * kappa_0 / c_v; // Dynamic viscosity constant
 
 /* Adjustable physical parameters */
 const double L = 53e8; // Length of flux tube      (cm)
-const double T = 4; // Length of simulation     (s)
+const double L_t = 4; // Length of simulation     (s)
 const double p_init = 1.0; // Initial pressure      (erg cm^-3)
 const double u_init = 0.0; // Initial speed of the plasma       (cm/s)
 const double T_init = 2e4; // Initial temperature of the plasma     (K)
-const double F = 3.5e1; // Flare energy flux   (erg cm^-2 s^-1)
+const double F = 3.5e10; // Flare energy flux   (erg cm^-2 s^-1)
 const double Delta_fl = 10e8; // extent of flare heat flux function (cm)
-const float h = 2 * F / Delta_fl; // flare heating function
+const float h = 0 * 2 * F / Delta_fl; // flare heating function
 
 /* Transition region parameters */
 const double T_chr = 2e4; // Temperature of the chromosphere  (K)
@@ -32,15 +32,15 @@ const double T_cor = 2e6; // Temperature of the corona    (K)
 const double Delta_tr = 3e8; // Width of the transition region (cm)
 const double Delta_chr = 5e8; // Width of the chromosphere    (cm)
 const double w = 0.75e8; // width of the equilibrium heating function (cm)
-const double A = 0; // Coefficient of equilibrium heating function (erg??)
+const double A = 1e-20; // Coefficient of equilibrium heating function (erg??)
 
 /* Adjustable simulation parameters */
-const uint N_s = 512; // Number of spatial points
+const uint N_s = 1024; // Number of spatial points
 const uint N_k = 1e3; // Number of temporal points to keep
 const float ds = L / N_s; // distance between spatial points
 const float dt = 1e-6; // distance between temporal points
 const uint N_loops = 1; // Number of parallel loops to simulate
-const uint N_t = T / dt; // total number of temporal points
+const uint N_t = L_t / dt; // total number of temporal points
 const uint K = N_t / N_k; // Number of points to skip to keep the correct amount
 
 /* velocity update constants */
@@ -57,6 +57,7 @@ const float u_c3 = 4 * mu_0 / 3;
 const float T_c2 = 1 / c_v;
 const float T_c3 = 4 * mu_0 / (3 * c_v);
 const float T_c4 = kappa_0 / c_v;
+const float T_c5 = 1 / c_v;
 
 /**
  * Simple model of the transition region
@@ -65,7 +66,7 @@ const float T_c4 = kappa_0 / c_v;
  */
 template<typename REAL> REAL transition_region(REAL s) {
 
-    return T_chr + (T_cor - T_chr) * (tanh(4 * (s - Delta_chr - (Delta_tr - 2 * w)) / Delta_tr) + tanh(4 * (L - s - Delta_chr - (Delta_tr - 2 * w)) / Delta_tr));
+    return T_chr + (T_cor - T_chr) * (tanh(4 * (s - Delta_chr - (Delta_tr - 2 * w)) / Delta_tr) + tanh(4 * (L - s - Delta_chr - (Delta_tr - 2 * w)) / Delta_tr)) / 2;
 
 }
 
@@ -122,11 +123,29 @@ template<typename REAL> REAL D(REAL x0, REAL x1, REAL ds) {
 template<typename REAL> REAL uD(REAL u, REAL x9, REAL x0, REAL x1,
         REAL ds) {
 
-    REAL t1 = x0 * abs(u) / ds;
-    REAL t2 = -(x9 + x1) * abs(u) / (2 * ds);
-    REAL t3 = (x9 - x1) * u / (2 * ds);
+    if (u > 0.0f) {
+        return (x0 - x9) * u / ds;
+    } else {
+        return (x1 - x0) * u / ds;
+    }
 
-    return t1 + t2 + t3;
+    //    REAL t1 = x0 * abs(u) / ds;
+    //    REAL t2 = -(x9 + x1) * abs(u) / (2 * ds);
+    //    REAL t3 = -(x9 - x1) * u / (2 * ds);
+
+    //    return t1 + t2 + t3;
+}
+
+template<typename REAL> REAL cD(REAL x9, REAL x1, REAL ds) {
+
+    return (x1 - x9) / (2 * ds);
+
+}
+
+template<typename REAL> REAL D2(REAL x9, REAL x0, REAL x1, REAL ds) {
+
+    return (x9 - 2 * x0 + x1) / (ds * ds);
+
 }
 
 template<typename REAL> REAL ave(REAL x0, REAL x1) {
@@ -166,6 +185,9 @@ template<typename REAL> REAL velocity_update(REAL rho_0, REAL rho_1,
     REAL t2 = -u_c2 * D(p_0, p_1, ds) / ave(rho_0, rho_1);
 
     /* (1/rho) d/ds((4/3) mu du/ds) */
+    //    REAL duds_0 = D(u_9, u_0, ds);
+    //    REAL duds_1 = D(u_0, u_1, ds);
+    //    REAL t3_1 = (5/2) * T_0
     REAL mudu_0 = T_0 * T_0 * sqrt(T_0) * D(u_9, u_0, ds);
     REAL mudu_1 = T_1 * T_1 * sqrt(T_1) * D(u_0, u_1, ds);
     REAL t3 = u_c3 * D(mudu_0, mudu_1, ds) / ave(rho_0, rho_1);
@@ -179,8 +201,8 @@ template<typename REAL> REAL velocity_update(REAL rho_0, REAL rho_1,
 /* c3 = 4 mu_0 / (3 c_v) 		*/
 
 /* c4 = K_0 / c_v				*/
-template<typename REAL> REAL energy_update(REAL rho_9, REAL rho_0,
-        REAL rho_1, REAL u_9, REAL u_0, REAL u_1, REAL T_9, REAL T_0, REAL T_1,
+template<typename REAL> REAL energy_update(REAL rho_0,
+        REAL u_9, REAL u_0, REAL T_9, REAL T_0, REAL T_1,
         REAL h_0, REAL ds, REAL dt) {
 
     /* -u dT/ds */
@@ -196,19 +218,25 @@ template<typename REAL> REAL energy_update(REAL rho_9, REAL rho_0,
     REAL t3 = T_c3 * (T52_0 / rho_0) * duds * duds;
 
     /* (kappa_0/c_v)(1/rho) d/ds(T^5/2 dT/ds) */
+    //    REAL T32_0 = T_0 * sqrt(T_0);
+    //    REAL dTds = cD(T_9, T_1, ds);
+    //    REAL d2Tds2 = D2(T_9, T_0, T_1, ds);
+    //    REAL t4 = T_c4 * (5 * T32_0 * dTds * dTds / 2 + T52_0 * d2Tds2) / rho_0;
+
+    /* (kappa_0/c_v)(1/rho) d/ds(T^5/2 dT/ds) */
     REAL T52_1 = T_1 * T_1 * sqrt(T_1);
     REAL T52_9 = T_9 * T_9 * sqrt(T_9);
     REAL KdT_0 = ave(T52_9, T52_0) * D(T_9, T_0, ds);
     REAL KdT_1 = ave(T52_0, T52_1) * D(T_0, T_1, ds);
-    REAL t4 = T_c4 * D(KdT_0, KdT_1, ds);
+    REAL t4 = T_c4 * D(KdT_0, KdT_1, ds) / rho_0;
 
-    /* h / rho  */
-    REAL t5 = h_0 / rho_0;
+    /* (1/c_v) h / rho  */
+    REAL t5 = T_c5 * h_0 / rho_0;
 
     return T_0 + dt * (t1 + t2 + t3 + t4 + t5);
 }
 
-template<typename REAL> void hydro_explicit(REAL * h, REAL * rho, REAL * u, REAL * T, size_t pitch) {
+template<typename REAL> uint hydro_explicit(REAL * h, REAL * rho, REAL * u, REAL * T, size_t pitch) {
 
     /* Main time-marching loop */
     for (uint k = 0; k < N_k - 1; k++) {
@@ -216,6 +244,7 @@ template<typename REAL> void hydro_explicit(REAL * h, REAL * rho, REAL * u, REAL
         /* Secondary time-marching loop */
         for (uint l = 0; l < K; l++) {
 
+            /*  */
             if (l != 0) {
                 for (uint j = 0; j < N_s; j++) {
                     rho[k * pitch + j] = rho[(k + 1) * pitch + j];
@@ -243,13 +272,30 @@ template<typename REAL> void hydro_explicit(REAL * h, REAL * rho, REAL * u, REAL
                 REAL T_1 = T[k * pitch + j + 1];
 
                 if (j != N_s - 2) {
-                    u[(k + 1) * pitch + j] = velocity_update(rho_0, rho_1, u_9, u_0, u_1, T_9, T_0, T_1, ds, dt);
+                    u_0 = velocity_update(rho_0, rho_1, u_9, u_0, u_1, T_9, T_0, T_1, ds, dt);
+                    if (isnan(u_0) || isinf(u_0)) {
+                        printf("NaN detected\n");
+                        return k;
+                    }
+                    u[(k + 1) * pitch + j] = u_0;
                 }
 
 
                 /* Update values */
-                rho[(k + 1) * pitch + j] = density_update(rho_9, rho_0, rho_1, u_9, u_0, ds, dt);
-                T[(k + 1) * pitch + j] = energy_update(rho_9, rho_0, rho_1, u_9, u_0, u_1, T_9, T_0, T_1, h[j], ds, dt);
+                rho_0 = density_update(rho_9, rho_0, rho_1, u_9, u_0, ds, dt);
+                if (isnan(rho_0) || isinf(rho_0)) {
+                    printf("NaN detected\n");
+                    return k;
+                }
+                rho[(k + 1) * pitch + j] = rho_0;
+
+                T_0 = energy_update(rho_0, u_9, u_0, T_9, T_0, T_1, h[j], ds, dt);
+                if (isnan(T_0) || isinf(rho_0)) {
+                    printf("NaN detected\n");
+                    return k;
+                }
+                T[(k + 1) * pitch + j] = T_0;
+
 
             }
 
@@ -275,7 +321,10 @@ template<typename REAL> void hydro_explicit(REAL * h, REAL * rho, REAL * u, REAL
             rho[(k + 1) * pitch + j] = rho[(k + 1) * pitch + (j - 1)];
             T[(k + 1) * pitch + j] = T[(k + 1) * pitch + (j - 1)];
         }
+        printf("%d / %d\n", k, N_k);
     }
+
+
 
 
 }
@@ -327,7 +376,7 @@ int main(int argc, char **argv) {
 
 
 
-    hydro_explicit(h_h, rho_h, u_h, T_h, pitch_h);
+    uint num = hydro_explicit(h_h, rho_h, u_h, T_h, pitch_h);
 
 
     printf("%f\n", milli);
@@ -338,7 +387,7 @@ int main(int argc, char **argv) {
     FILE * T_f = fopen("T.dat", "wb");
 
     fwrite(&N_s, sizeof (uint), 1, meta_f);
-    fwrite(&N_k, sizeof (uint), 1, meta_f);
+    fwrite(&num, sizeof (uint), 1, meta_f);
 
     fwrite(rho_h, sizeof (float), N_s * N_k, rho_f);
     fwrite(u_h, sizeof (float), N_s * N_k, u_f);
