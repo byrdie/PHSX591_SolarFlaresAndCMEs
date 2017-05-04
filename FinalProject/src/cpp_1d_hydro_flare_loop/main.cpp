@@ -17,14 +17,14 @@ const double Pr = 1e-4; // Prandtl number in fully ionized plasma
 const double mu_0 = Pr * kappa_0 / c_v; // Dynamic viscosity constant
 
 /* Adjustable physical parameters */
-const double L = 53e8; // Length of flux tube      (cm)
+const double L_tube = 53e8; // Length of flux tube      (cm)
 const double L_t = 4; // Length of simulation     (s)
 const double p_init = 1.0; // Initial pressure      (erg cm^-3)
 const double u_init = 0.0; // Initial speed of the plasma       (cm/s)
 const double T_init = 2e4; // Initial temperature of the plasma     (K)
 const double F = 3.5e10; // Flare energy flux   (erg cm^-2 s^-1)
 const double Delta_fl = 10e8; // extent of flare heat flux function (cm)
-const float h = 0 * 2 * F / Delta_fl; // flare heating function
+const float h = 2 * F / Delta_fl; // flare heating function
 
 /* Transition region parameters */
 const double T_chr = 2e4; // Temperature of the chromosphere  (K)
@@ -32,9 +32,11 @@ const double T_cor = 2e6; // Temperature of the corona    (K)
 const double Delta_tr = 3e8; // Width of the transition region (cm)
 const double Delta_chr = 5e8; // Width of the chromosphere    (cm)
 const double w = 0.75e8; // width of the equilibrium heating function (cm)
-const double A = 1e-20; // Coefficient of equilibrium heating function (erg??)
+const double A = 0.1; // Coefficient of equilibrium heating function (erg cm^-3 s^-1)
 
 /* Adjustable simulation parameters */
+
+const double L = L_tube + 2 * Delta_tr; // Length of grid
 const uint N_s = 1024; // Number of spatial points
 const uint N_k = 1e3; // Number of temporal points to keep
 const float ds = L / N_s; // distance between spatial points
@@ -44,27 +46,60 @@ const uint N_t = L_t / dt; // total number of temporal points
 const uint K = N_t / N_k; // Number of points to skip to keep the correct amount
 
 /* velocity update constants */
-/* c2 = k/m */
-/* c3 = (4/3)*mu_0*/
 const float u_c2 = k_b / mbar;
 const float u_c3 = 4 * mu_0 / 3;
 
 /* Temperture update constants */
-/* c2 = 1 / c_v*/
-/* c3 = 4 mu_0 / (3 c_v)*/
-/* c4 = K_0 / c_v*/
-/* c5 = h*/
 const float T_c2 = 1 / c_v;
 const float T_c3 = 4 * mu_0 / (3 * c_v);
 const float T_c4 = kappa_0 / c_v;
 const float T_c5 = 1 / c_v;
+
+template<typename REAL> REAL transition_region(REAL s) {
+
+    REAL x;
+
+    if (s < 5e8) {
+        x = 0;
+    } else if (s <= 6.5e8) {
+        x = 1.6296296296296298e17 - 1.1814814814814816e9*s + 3.1777777777777776*pow(s,2) - 3.7481481481481485e-9*pow(s,3) + 1.6296296296296295e-18*pow(s,4);
+    } else if (6.5e8 < s and s <= 8e8) {
+        x = 6.324999999999988e15 - 1.1e7*s;
+    } else if (8e8 < s and s <= 9.5e8) {
+        x = -9.114824074074075e17 + 4.265148148148148e9*s - 7.431111111111111*pow(s,2) + 5.703703703703704e-9*pow(s,3) - 1.6296296296296295e-18*pow(s,4);
+    } else if (9.5e8 < s and s <= 5.35e9) {
+        x = -3.300000000000032e15 + 6.578488888888889e-8*s;
+    } else if (5.35e9 < s and s <= 5.5e9) {
+        printf("%e %e %e %e %e\n", -1.28176e21, 9.45603e11 * s, 261.556 * s * s, 3.21481e-8 * s * s * s, 1.48148e-18 * s * s * s * s);
+        x = -1.409937049074074e21 + 1.0401628518518518e12*s - 287.7111111111111*pow(s,2) + 3.5362962962962963e-8*pow(s,3) - 1.6296296296296295e-18*pow(s,4);
+    } else if (5.5e9 < s and s <= 5.65e9) {
+        x = -6.297499999998959e16 + 1.1e7*s;
+    } else if (5.65e9 < s and s <= 5.8e9) {
+        x = 1.7487816296296297e21 - 1.2225025185185186e12*s + 320.41777777777776*pow(s,2) - 3.731851851851852e-8*pow(s,3) + 
+      1.6296296296296295e-18*pow(s,4);
+    } else {
+        x = 1105.1157333333335 - 4.4007822222222223e-7*s;
+    }
+
+    REAL t1 = pow(T_chr, 7.0 / 2.0);
+
+    REAL t2 = (7.0 / 2.0) * (1 / kappa_0) * x;
+
+
+    REAL result = pow(t1 - t2, 2.0 / 7.0);
+
+    printf("%e  %e  %e      %e\n", t1, x, t2, result);
+
+    return result;
+
+}
 
 /**
  * Simple model of the transition region
  * @param s, parameterized loop location
  * @return approximate temperature at equilbrium
  */
-template<typename REAL> REAL transition_region(REAL s) {
+template<typename REAL> REAL transition_region_tanh(REAL s) {
 
     return T_chr + (T_cor - T_chr) * (tanh(4 * (s - Delta_chr - (Delta_tr - 2 * w)) / Delta_tr) + tanh(4 * (L - s - Delta_chr - (Delta_tr - 2 * w)) / Delta_tr)) / 2;
 
@@ -89,7 +124,7 @@ template<typename REAL> REAL S(REAL s) {
 
     if (0 < s && s < 2 * w) {
         REAL x = (s / w - 1);
-        return 1 - s * s;
+        return 1 - x * x;
     } else {
         return 0;
     }
@@ -149,7 +184,7 @@ template<typename REAL> REAL D2(REAL x9, REAL x0, REAL x1, REAL ds) {
 }
 
 template<typename REAL> REAL ave(REAL x0, REAL x1) {
-    return (x0 + x1) / 2;
+    return (x0 + x1) / 2.0;
 }
 
 /* d rho / dt  = - d/ds(rho u) 					*/
@@ -245,7 +280,7 @@ template<typename REAL> uint hydro_explicit(REAL * h, REAL * rho, REAL * u, REAL
         for (uint l = 0; l < K; l++) {
 
             /*  */
-            if (l != 0) {
+            if (l != 0 && k != 0) {
                 for (uint j = 0; j < N_s; j++) {
                     rho[k * pitch + j] = rho[(k + 1) * pitch + j];
                     u[k * pitch + j] = u[(k + 1) * pitch + j];
@@ -364,7 +399,7 @@ int main(int argc, char **argv) {
     /* Set up the initial conditions */
     for (uint j = 0; j < N_s; j++) {
 
-        float T = transition_region(j * ds);
+        float T = transition_region((double) j * ds);
         rho_h[j] = ideal_gas(T); // Initial density
         u_h[j] = u_init; // Initial velocity
         T_h[j] = T; // Initial temperture
