@@ -1,0 +1,14 @@
+\begin{thebibliography}{}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+\providecommand{\url}[1]{\href{#1}{#1}}
+
+\bibitem[{{Braginskii}(1965)}]{1965RvPP....1..205B}
+{Braginskii}, S.~I. 1965, Reviews of Plasma Physics, 1, 205
+
+\bibitem[{{Harlow} \& {Welch}(1965)}]{1965PhFl....8.2182H}
+{Harlow}, F.~H., \& {Welch}, J.~E. 1965, Physics of Fluids, 8, 2182
+
+\bibitem[{{Longcope}(2014)}]{2014ApJ...795...10L}
+{Longcope}, D.~W. 2014, \apj, 795, 10
+
+\end{thebibliography}

@@ -36,11 +36,12 @@ const double A = 0.1; // Coefficient of equilibrium heating function (erg cm^-3 
 
 /* Adjustable simulation parameters */
 
-const double L = L_tube + 2 * Delta_tr; // Length of grid
+const double L = L_tube + 2 * Delta_chr; // Length of grid
 const uint N_s = 1024; // Number of spatial points
 const uint N_k = 1e3; // Number of temporal points to keep
 const float ds = L / N_s; // distance between spatial points
 const float dt = 1e-6; // distance between temporal points
+const float dk = L_t / (double)N_k;    // Timestep for each epoch
 const uint N_loops = 1; // Number of parallel loops to simulate
 const uint N_t = L_t / dt; // total number of temporal points
 const uint K = N_t / N_k; // Number of points to skip to keep the correct amount
@@ -423,6 +424,9 @@ int main(int argc, char **argv) {
 
     fwrite(&N_s, sizeof (uint), 1, meta_f);
     fwrite(&num, sizeof (uint), 1, meta_f);
+    fwrite(&ds, sizeof (float), 1, meta_f);
+    fwrite(&dk, sizeof (float), 1, meta_f);
+    fwrite(&Delta_chr, sizeof(double),1, meta_f);
 
     fwrite(rho_h, sizeof (float), N_s * N_k, rho_f);
     fwrite(u_h, sizeof (float), N_s * N_k, u_f);
